@@ -1,0 +1,44 @@
+[
+    {
+        "query": "My cat seems very sick, throwing up constantly.",
+        "mood": "anxious",
+        "time_of_day": "night",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.9,
+            "emotional_distress": 0.95,
+            "practical_need": 0.9,
+            "empathy_requirement": 0.9
+        },
+        "expected_persona_insight_with_context": "Highly urgent medical issue for a pet, causing significant emotional distress, requiring immediate veterinary advice, and a very empathetic, reassuring response, especially at night.",
+        "expected_persona_insight_without_context": "Highly urgent medical issue for a pet, causing significant emotional distress, requiring immediate veterinary advice, and a very empathetic response."
+    },
+    {
+        "query": "I just lost my job, and I don't know what to do next.",
+        "mood": "sad",
+        "time_of_day": "afternoon",
+        "weather_condition": "cloudy",
+        "expected_scores": {
+            "urgency": 0.7,
+            "emotional_distress": 0.9,
+            "practical_need": 0.8,
+            "empathy_requirement": 1.0
+        },
+        "expected_persona_insight_with_context": "Urgent practical needs related to job searching and financial stability. High emotional distress requiring deep empathy and support. Practical advice for next steps is needed, acknowledging the sadness.",
+        "expected_persona_insight_without_context": "Urgent practical needs, high emotional distress, requiring practical advice and high empathy."
+    },
+    {
+        "query": "I'm bored, any movie suggestions?",
+        "mood": "neutral",
+        "time_of_day": "evening",
+        "weather_condition": "rainy",
+        "expected_scores": {
+            "urgency": 0.1,
+            "emotional_distress": 0.2,
+            "practical_need": 0.6,
+            "empathy_requirement": 0.3
+        },
+        "expected_persona_insight_with_context": "Low urgency, low emotional distress. User is seeking practical suggestions for entertainment, fitting for a rainy evening. A cheerful, helpful tone is appropriate.",
+        "expected_persona_insight_without_context": "Low urgency, low emotional distress. User is seeking practical suggestions for entertainment. A cheerful, helpful tone is appropriate."
+    }
+]
