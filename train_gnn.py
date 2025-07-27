@@ -1,4 +1,9 @@
-# train_gnn.py
+"""
+train_gnn.py
+
+Trains the GNN model for persona inference using synthetic data and context features.
+Handles data generation, model training, and saving the trained model for downstream reasoning.
+"""
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,7 +30,6 @@ HIDDEN_DIM = 64 # Hidden dimension for GNN layers
 OUTPUT_DIM = 4 # Urgency, Emotional Distress, Practical Need, Empathy Requirement
 
 # Initialize encoders to get their dimensions
-# These will be initialized once globally
 transformer_encoder = TransformerEncoder()
 context_encoder = ContextEncoder()
 
@@ -52,7 +56,7 @@ criterion = nn.MSELoss() # Using MSE for regression tasks (predicting scores)
 print(f"GATModel initialized: input_dim={TOTAL_INPUT_DIM}, hidden_dim={HIDDEN_DIM}, output_dim={OUTPUT_DIM}")
 
 # --- Mock Data Generation ---
-def generate_mock_data(num_samples=100): # Reduced num_samples for faster debugging
+def generate_mock_data(num_samples=100):
     print("Generating mock training data...")
     mock_queries = [
         "My laptop screen cracked.",
@@ -73,8 +77,6 @@ def generate_mock_data(num_samples=100): # Reduced num_samples for faster debugg
     mock_times = ["Day", "Night", "Morning", "Afternoon", "Evening"]
     mock_weathers = ["Clear", "Rainy", "Cloudy", "Snowy", "Windy", "Stormy"]
 
-    # Define mock ground truth labels (Urgency, Emotional Distress, Practical Need, Empathy Requirement)
-    # Scale from 0 to 1 for easier interpretation and using sigmoid output
     persona_labels = {
         "My laptop screen cracked.": {"Urgency": 0.8, "Emotional Distress": 0.6, "Practical Need": 0.9, "Empathy Requirement": 0.5},
         "I lost my pet cat.": {"Urgency": 0.9, "Emotional Distress": 0.9, "Practical Need": 0.2, "Empathy Requirement": 0.9},
@@ -90,7 +92,6 @@ def generate_mock_data(num_samples=100): # Reduced num_samples for faster debugg
         "My pipes burst and flooded the basement.": {"Urgency": 0.95, "Emotional Distress": 0.8, "Practical Need": 0.99, "Empathy Requirement": 0.7}
     }
 
-    # Contextual adjustments for mock labels - these are the *targets* for the GNN to learn
     def adjust_label_for_context(label, mood, time, weather):
         adjusted_label = label.copy()
         if mood.lower() in ["stressed", "anxious", "frustrated"]:
@@ -101,53 +102,43 @@ def generate_mock_data(num_samples=100): # Reduced num_samples for faster debugg
             adjusted_label["Empathy Requirement"] = max(0.0, adjusted_label["Empathy Requirement"] - 0.1)
 
         if time.lower() == "night":
-            adjusted_label["Urgency"] = min(1.0, adjusted_label["Urgency"] + 0.1) if adjusted_label["Urgency"] > 0.5 else adjusted_label["Urgency"] # More urgent at night
+            adjusted_label["Urgency"] = min(1.0, adjusted_label["Urgency"] + 0.1) if adjusted_label["Urgency"] > 0.5 else adjusted_label["Urgency"]
             adjusted_label["Empathy Requirement"] = min(1.0, adjusted_label["Empathy Requirement"] + 0.05)
         
         if weather.lower() in ["stormy", "rainy"]:
-            adjusted_label["Practical Need"] = min(1.0, adjusted_label["Practical Need"] + 0.1) if adjusted_label["Practical Need"] > 0.5 else adjusted_label["Practical Need"] # Might need weather-related help
+            adjusted_label["Practical Need"] = min(1.0, adjusted_label["Practical Need"] + 0.1) if adjusted_label["Practical Need"] > 0.5 else adjusted_label["Practical Need"]
             adjusted_label["Emotional Distress"] = min(1.0, adjusted_label["Emotional Distress"] + 0.05)
         
         return adjusted_label
 
     dataset = []
     failed_graphs = 0
-    # Use tqdm for outer loop to see progress of mock data generation
     for _ in tqdm(range(num_samples), desc="Generating Mock Graphs"):
         query_text = random.choice(mock_queries)
         mock_mood = random.choice(mock_moods)
         mock_time = random.choice(mock_times)
         mock_weather = random.choice(mock_weathers)
 
-        # Get base graph for the query
-        # Keep depth, max_nodes, max_edges small for efficient mock data generation
         mock_nx_graph = fetch_conceptnet_relations(query_text.split()[0], depth=1, max_nodes=10, max_edges=10)
 
         if not mock_nx_graph or mock_nx_graph.number_of_nodes() == 0:
             failed_graphs += 1
-            # print(f"Skipping sample due to empty graph for query: '{query_text.split()[0]}'")
             continue
 
-        # Get query embedding
-        query_embedding_tensor = transformer_encoder.encode(query_text).squeeze(0) # Ensure 1D tensor
-
-        # Get context embedding
+        query_embedding_tensor = transformer_encoder.encode(query_text).squeeze(0)
         context_embedding_tensor = context_encoder.encode(mock_mood, mock_time, mock_weather)
 
-        # Convert NetworkX graph to PyTorch Geometric Data object with combined features
         pyg_data, _ = nx_to_pyg_data(
             mock_nx_graph,
             feature_dim=TOTAL_INPUT_DIM,
             query_embedding=query_embedding_tensor,
-            context_embedding=context_embedding_tensor # Pass context embedding
+            context_embedding=context_embedding_tensor
         )
 
         if pyg_data is None or pyg_data.x is None or pyg_data.x.numel() == 0:
             failed_graphs += 1
-            # print(f"Skipping sample due to invalid PyG data after feature creation for query: '{query_text.split()[0]}'")
             continue
 
-        # Assign ground truth labels
         true_labels = adjust_label_for_context(persona_labels[query_text], mock_mood, mock_time, mock_weather)
         pyg_data.y = torch.tensor([
             true_labels["Urgency"],
@@ -165,7 +156,7 @@ def train():
     model.train()
     total_loss = 0
 
-    dataset = generate_mock_data(num_samples=2) # Keep this at 100 for now, we'll see if it gets stuck here
+    dataset = generate_mock_data(num_samples=100)
     if not dataset:
         print("No valid data generated for training epoch. Skipping training for this epoch.")
         return 0.0
@@ -177,32 +168,17 @@ def train():
         data = data.to(device)
         optimizer.zero_grad()
 
-        # Forward pass: GNN outputs logits
         out = model(data)
-
-        # Apply sigmoid to output for comparison with 0-1 targets
         predicted_scores = torch.sigmoid(out)
 
-        # --- CRITICAL DEBUGGING PRINTS HERE ---
-        print(f"\nDEBUG in train(): Shape of predicted_scores: {predicted_scores.shape}")
-        print(f"DEBUG in train(): Shape of data.y from DataLoader: {data.y.shape}")
-
-        # Ensure that predicted_scores has the correct batch size
         current_batch_size = predicted_scores.shape[0]
-
-        # Reshape data.y to (current_batch_size, OUTPUT_DIM)
         try:
             target_labels = data.y.view(current_batch_size, OUTPUT_DIM)
         except RuntimeError as e:
             print(f"CRITICAL ERROR in train(): Failed to reshape data.y.")
-            print(f"  Original data.y shape: {data.y.shape}")
-            print(f"  Attempted reshape: ({current_batch_size}, {OUTPUT_DIM}).")
-            print(f"  Error details: {e}")
-            # Re-raising the error is good for now so it doesn't mask the problem
             raise e 
 
         loss = criterion(predicted_scores, target_labels)
-
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
@@ -210,9 +186,7 @@ def train():
 
     return total_loss / len(train_loader)
 
-# --- Save Model ---
 def save_model(model, path, input_dim, hidden_dim, output_dim):
-    """Saves the model's state dictionary along with its configuration."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     torch.save({
         'model_state_dict': model.state_dict(),
@@ -225,13 +199,42 @@ def save_model(model, path, input_dim, hidden_dim, output_dim):
 if __name__ == "__main__":
     print(f"Starting training for {NUM_EPOCHS} epochs...")
     for epoch in range(1, NUM_EPOCHS + 1):
-        # The tqdm progress bar for epochs will now surround the entire training process
-        # including data generation.
         epoch_pbar = tqdm(total=1, desc=f"Epoch {epoch:03d}", leave=False)
         train_loss = train()
         epoch_pbar.set_postfix(loss=f"{train_loss:.4f}")
-        epoch_pbar.close() # Close the inner progress bar
+        epoch_pbar.close()
         print(f"Epoch {epoch:03d}, Loss: {train_loss:.4f}")
 
     save_model(model, MODEL_SAVE_PATH, TOTAL_INPUT_DIM, HIDDEN_DIM, OUTPUT_DIM)
     print("Training finished.")
+
+    # --- Persona Score Comparison: With and Without Context ---
+    query_text = "My laptop screen cracked."
+    real_mood, real_time, real_weather = "Stressed", "Night", "Rainy"
+    query_embedding = transformer_encoder.encode(query_text).squeeze(0)
+    context_embedding_real = context_encoder.encode(real_mood, real_time, real_weather)
+    context_embedding_neutral = context_encoder.encode("Neutral", "Day", "Clear")
+
+    mock_nx_graph = fetch_conceptnet_relations(query_text.split()[0], depth=1, max_nodes=10, max_edges=10)
+
+    pyg_data_with_context, _ = nx_to_pyg_data(
+        mock_nx_graph,
+        feature_dim=TOTAL_INPUT_DIM,
+        query_embedding=query_embedding,
+        context_embedding=context_embedding_real
+    )
+
+    pyg_data_without_context, _ = nx_to_pyg_data(
+        mock_nx_graph,
+        feature_dim=TOTAL_INPUT_DIM,
+        query_embedding=query_embedding,
+        context_embedding=context_embedding_neutral
+    )
+
+    model.eval()
+    with torch.no_grad():
+        out_with_context = torch.sigmoid(model(pyg_data_with_context.to(device)))
+        out_without_context = torch.sigmoid(model(pyg_data_without_context.to(device)))
+
+    print("Raw Persona Scores WITH context:", out_with_context.cpu().numpy())
+    print("Raw Persona Scores WITHOUT context:", out_without_context.cpu().numpy())

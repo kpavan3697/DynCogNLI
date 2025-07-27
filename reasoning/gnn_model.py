@@ -1,4 +1,10 @@
 # reasoning/gnn_model.py
+"""
+gnn_model.py
+
+Defines the GNN architecture (e.g., GATModel) for persona inference.
+Implements forward pass and model layers for reasoning over graph data.
+"""
 import torch
 import torch.nn as nn
 from torch_geometric.nn import GATConv, global_mean_pool

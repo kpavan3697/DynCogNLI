@@ -1,3 +1,10 @@
+# utils/graph_utils.py
+"""
+graph_utils.py
+
+Provides utility functions for manipulating and analyzing graphs.
+Includes helpers for graph traversal, feature extraction, and visualization support.
+"""
 import difflib
 
 def find_closest_node(graph_nodes, concept, cutoff=0.8):

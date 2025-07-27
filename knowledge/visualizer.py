@@ -1,4 +1,10 @@
 # knowledge/visualizer.py
+"""
+visualizer.py
+
+Provides functions to visualize knowledge graphs and attention scores using NetworkX and Matplotlib.
+Helps inspect graph structure and model attention in the DynCogNLI pipeline.
+"""
 import networkx as nx
 import matplotlib.pyplot as plt
 

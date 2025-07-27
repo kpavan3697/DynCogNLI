@@ -1,4 +1,10 @@
 # context/response_generator.py
+"""
+response_generator.py
+
+Generates natural language responses based on persona insights and context.
+Integrates with LLMs and other modules to produce user-facing replies.
+"""
 
 from transformers import pipeline
 import re

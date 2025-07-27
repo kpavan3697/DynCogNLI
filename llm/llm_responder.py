@@ -1,4 +1,9 @@
-# llm/llm_responder.py
+"""
+llm_responder.py
+
+This module provides the LLMResponder class, which generates conversational responses using an OpenAI-compatible language model.
+It takes user queries and persona insights (from the GNN) and produces empathetic, context-aware replies for the DynCogNLI system.
+"""
 import os
 from openai import OpenAI
 import streamlit as st

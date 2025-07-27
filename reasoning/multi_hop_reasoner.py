@@ -1,3 +1,10 @@
+# reasoning/multi_hop_reasoner.py
+"""
+multi_hop_reasoner.py
+
+Implements multi-hop reasoning over knowledge graphs using the trained GNN model.
+Supports inference, persona scoring, and context-aware reasoning for user queries.
+"""
 import torch
 import networkx as nx
 import os

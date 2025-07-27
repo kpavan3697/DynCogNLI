@@ -1,4 +1,10 @@
 #knowledge/retriever.py
+"""
+retriever.py
+
+Retrieves relevant knowledge graph subgraphs or nodes for a given query.
+Supports graph-based reasoning and information extraction in the DynCogNLI pipeline.
+"""
 import spacy
 import networkx as nx
 import re

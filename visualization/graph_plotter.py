@@ -1,4 +1,10 @@
 #visualization/graph_plotter.py
+"""
+graph_plotter.py
+
+Visualizes graph structures and attention weights using NetworkX and Matplotlib.
+Useful for inspecting GNN attention mechanisms and graph connectivity in DynCogNLI.
+"""
 import networkx as nx
 import matplotlib.pyplot as plt
 

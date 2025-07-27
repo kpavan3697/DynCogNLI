@@ -1,4 +1,10 @@
 # context/context_encoder.py
+"""
+context_encoder.py
+
+Implements the ContextEncoder class for encoding mood, time, and weather into context embeddings.
+Provides context features for the GNN model.
+"""
 import torch
 
 class ContextEncoder:

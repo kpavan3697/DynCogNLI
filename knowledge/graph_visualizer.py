@@ -1,5 +1,11 @@
 #knowledge/graph_visualizer.py
-iimport matplotlib.pyplot as plt
+"""
+graph_visualizer.py
+
+Provides functions to visualize knowledge graphs and subgraphs using NetworkX and Matplotlib.
+Useful for inspecting graph structure and relationships in the DynCogNLI pipeline.
+"""
+import matplotlib.pyplot as plt
 import networkx as nx
 
 def visualize_subgraph(G, center_node=None, num_hops=1, title="Graph"):

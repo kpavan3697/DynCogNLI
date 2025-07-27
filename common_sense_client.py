@@ -1,4 +1,10 @@
 # common_sense_client.py
+"""
+common_sense_client.py
+
+Simulates retrieval of subgraphs from a commonsense knowledge graph based on user queries.
+Provides functions for graph construction and feature initialization for downstream reasoning.
+"""
 import networkx as nx
 
 def get_subgraph_for_query(query: str, max_nodes: int = 50) -> nx.Graph:

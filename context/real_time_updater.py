@@ -1,4 +1,10 @@
 #context/real_time_updater.py
+"""
+real_time_updater.py
+
+Provides utilities to update context variables in real time.
+Supports dynamic adaptation of context for inference and training.
+"""
 import os
 from datetime import datetime
 

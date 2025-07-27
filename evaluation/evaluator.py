@@ -1,4 +1,11 @@
 # evaluation/evaluator.py
+"""
+evaluator.py
+
+Evaluates the persona inference system by comparing GNN-derived scores and persona insights
+against expected values from a test dataset. Calculates metrics such as MSE and semantic similarity
+(with and without context) and saves detailed results for analysis.
+"""
 import json
 import os
 import sys

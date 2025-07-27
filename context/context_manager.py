@@ -1,4 +1,10 @@
 #context/context_manager.py
+"""
+context_manager.py
+
+Manages context information such as mood, time, and weather for the DynCogNLI system.
+Handles context updates and provides context data to other modules.
+"""
 class ContextManager:
     def __init__(self, max_history=10):
         # Keeps last `max_history` dialogue turns

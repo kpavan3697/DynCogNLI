@@ -1,4 +1,10 @@
 # context/transformer_encoder.py
+"""
+transformer_encoder.py
+
+Implements the TransformerEncoder class for encoding user queries into dense embeddings.
+Used for feature extraction in the persona inference pipeline.
+"""
 import torch
 from transformers import AutoTokenizer, AutoModel
 import os

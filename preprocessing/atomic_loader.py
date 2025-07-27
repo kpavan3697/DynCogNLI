@@ -1,4 +1,10 @@
 #preprocessing/atomic_loader.py
+"""
+atomic_loader.py
+
+Loads and preprocesses ATOMIC commonsense knowledge data for use in graph construction and reasoning.
+Handles parsing, filtering, and formatting of ATOMIC triples.
+"""
 import csv
 
 def load_atomic_tsv(filepath):

@@ -1,4 +1,10 @@
 #preprocessing/conceptnet_loader.py
+"""
+conceptnet_loader.py
+
+Loads and preprocesses ConceptNet knowledge graph data for use in graph construction and reasoning.
+Handles parsing, filtering, and formatting of ConceptNet triples.
+"""
 import csv
 
 def load_conceptnet(filepath, lang='en'):

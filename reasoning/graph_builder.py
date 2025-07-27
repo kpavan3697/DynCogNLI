@@ -1,4 +1,10 @@
 # reasoning/graph_builder.py
+"""
+graph_builder.py
+
+Builds knowledge graphs from ConceptNet and ATOMIC data, and converts them to PyTorch Geometric format.
+Handles graph construction, feature preparation, and utility functions for GNN input.
+"""
 import networkx as nx
 import requests
 import json
