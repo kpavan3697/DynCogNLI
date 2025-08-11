@@ -6,6 +6,8 @@ Provides utility functions for manipulating and analyzing graphs.
 Includes helpers for graph traversal, feature extraction, and visualization support.
 """
 import difflib
+import networkx as nx
+
 
 def find_closest_node(graph_nodes, concept, cutoff=0.8):
     """
@@ -42,3 +44,13 @@ def normalize_and_match_concepts(graph, concepts):
                 concept_matches[concept] = None
 
     return concept_matches
+
+
+def merge_kg(conceptnet_triples, atomic_triples):
+    """
+    Merge ConceptNet and ATOMIC triples into a unified directed multigraph.
+    """
+    G = nx.MultiDiGraph()
+    for h, r, t in conceptnet_triples + atomic_triples:
+        G.add_edge(h, t, relation=r)
+    return G
