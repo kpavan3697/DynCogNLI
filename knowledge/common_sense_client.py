@@ -1,32 +1,41 @@
-# common_sense_client.py
 """
 common_sense_client.py
 
-Simulates retrieval of subgraphs from a commonsense knowledge graph based on user queries.
-Provides functions for graph construction and feature initialization for downstream reasoning.
+This module simulates the process of retrieving relevant subgraphs from a common sense 
+knowledge base. The `get_subgraph_for_query` function acts as a placeholder for a more 
+complex system that would perform entity linking, semantic search, and graph traversal on a 
+real-world knowledge graph (e.g., ConceptNet or a custom database). The function generates 
+a simplified NetworkX graph based on keywords in the user's query, providing a structured 
+input for the downstream GNN-based reasoning model.
 """
+
 import networkx as nx
+from typing import Set
 
 def get_subgraph_for_query(query: str, max_nodes: int = 50) -> nx.Graph:
     """
-    Simulates retrieving a subgraph from a common sense knowledge graph
-    based on the user's query. In a real system, this would involve querying
-    a database like ConceptNet or a custom knowledge base.
+    Simulates the retrieval of a relevant subgraph from a common sense knowledge graph.
+
+    This function generates a simple NetworkX graph where nodes represent concepts 
+    and edges represent relationships. The graph's content is determined by a keyword-based
+    matching system. In a production environment, this would be replaced with a robust
+    knowledge graph retrieval mechanism.
 
     Args:
-        query (str): The user's input query.
-        max_nodes (int): Maximum number of nodes in the subgraph.
+        query (str): The user's natural language input query.
+        max_nodes (int): The maximum number of nodes to include in the generated subgraph.
 
     Returns:
-        nx.Graph: A NetworkX graph representing the relevant subgraph.
+        nx.Graph: A NetworkX graph containing common sense concepts related to the query.
+                  Each node is guaranteed to have a 'feature' attribute.
     """
     graph = nx.Graph()
-    # Simple keyword-based subgraph generation for demonstration
-    # In a real system, this would be much more sophisticated, e.g.,
-    # using entity linking, semantic search, and graph traversal.
+    # Extract base concepts from the query for matching.
+    base_concepts: Set[str] = set(query.lower().split())
 
-    # Example nodes and edges based on common concepts
-    base_concepts = set(query.lower().split())
+    # --- Keyword-based Subgraph Generation ---
+    # This section adds predefined nodes and edges based on keywords found in the query.
+    # It mimics a retrieval process from a knowledge base.
     if "laptop" in base_concepts or "computer" in base_concepts:
         graph.add_nodes_from(["laptop", "computer", "screen", "keyboard", "device", "technology", "broken", "repair", "data"])
         graph.add_edges_from([("laptop", "screen"), ("laptop", "keyboard"), ("laptop", "device"),
@@ -53,42 +62,45 @@ def get_subgraph_for_query(query: str, max_nodes: int = 50) -> nx.Graph:
                               ("investment", "money"), ("income", "money"), ("expense", "money"),
                               ("urgent", "debt")])
 
-    # Add query words as nodes if not already present
+    # Add the exact query words as nodes if they are not already in the graph.
     for word in base_concepts:
         if word not in graph:
             graph.add_node(word)
-        # Link query words to general concepts
+        
+        # Link query words to general concepts if they exist in the graph.
         if word in ["cracked", "broken", "damaged"]:
             if "repair" in graph: graph.add_edge(word, "repair")
             if "issue" in graph: graph.add_edge(word, "issue")
-        if word in ["stressed", "anxious"]:
+        if word in ["stressed", "anxious", "worried"]:
             if "emotional_distress" in graph: graph.add_edge(word, "emotional_distress")
         if word in ["bored", "lonely"]:
             if "emotional_distress" in graph: graph.add_edge(word, "emotional_distress")
-
-    # Add some general nodes if the graph is too small
+    
+    # Add a default, generic subgraph if the initial graph is too small or empty.
     if graph.number_of_nodes() < 5:
         graph.add_nodes_from(["person", "user", "need", "problem", "solution", "help"])
         graph.add_edges_from([("person", "user"), ("user", "need"), ("need", "problem"),
                               ("problem", "solution"), ("solution", "help")])
 
-    # To ensure it's not empty for simple queries, add a default link
+    # Ensure the graph is connected by adding a default edge if it only contains nodes.
     if not graph.edges and graph.nodes:
-        if len(graph.nodes) > 1:
-            nodes_list = list(graph.nodes)
+        nodes_list = list(graph.nodes)
+        if len(nodes_list) > 1:
             graph.add_edge(nodes_list[0], nodes_list[1])
-        elif len(graph.nodes) == 1:
+        elif len(nodes_list) == 1:
             graph.add_node("context")
             graph.add_edge(list(graph.nodes)[0], "context")
 
-    # Limit graph size if it exceeds max_nodes (simple truncation)
+    # Limit the size of the graph to `max_nodes` to prevent excessive computation.
     if graph.number_of_nodes() > max_nodes:
         nodes_to_keep = list(graph.nodes)[:max_nodes]
-        graph = graph.subgraph(nodes_to_keep).copy() # Ensure it's a copy
+        graph = graph.subgraph(nodes_to_keep).copy()
 
-    # Ensure all nodes have some features, even if dummy
+    # Ensure every node has a 'feature' attribute. This is crucial for the GNN.
+    # The initial feature is a placeholder and will be replaced by real embeddings later.
     for node in graph.nodes():
         if 'feature' not in graph.nodes[node]:
-            graph.nodes[node]['feature'] = [0.0] * 30 # Placeholder for initial features
+            # A placeholder list of a fixed size.
+            graph.nodes[node]['feature'] = [0.0] * 30
 
     return graph

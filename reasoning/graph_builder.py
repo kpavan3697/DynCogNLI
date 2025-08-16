@@ -1,9 +1,11 @@
-# reasoning/graph_builder.py
 """
 graph_builder.py
 
-Builds knowledge graphs from ConceptNet and ATOMIC data, and converts them to PyTorch Geometric format.
-Handles graph construction, feature preparation, and utility functions for GNN input.
+This module is responsible for constructing a knowledge graph from a source like the
+ConceptNet API and then transforming it into a format suitable for a Graph Neural Network
+(GNN) model, specifically a PyTorch Geometric (PyG) `Data` object. It includes logic
+for handling API requests, rate limiting, and integrating dynamic information like
+user query and context embeddings into the graph's node features.
 """
 import networkx as nx
 import requests
@@ -14,7 +16,7 @@ import torch
 import numpy as np
 from torch_geometric.data import Data
 import certifi # Keep import even if not strictly used for verify=False
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, Deque
 
 # Suppress InsecureRequestWarning if verify=False is used
 import urllib3
@@ -24,10 +26,32 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # If you want to enable verification, change to True and ensure certifi is installed
 _requests_ca_bundle = False
 
-def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int = 50, max_edges: int = 100) -> nx.DiGraph:
+def fetch_conceptnet_relations(
+    start_node: str, 
+    depth: int = 2, 
+    max_nodes: int = 50, 
+    max_edges: int = 100
+) -> nx.DiGraph:
+    """
+    Fetches a knowledge subgraph from the ConceptNet API using a Breadth-First Search (BFS) approach.
+
+    This function starts with a `start_node` and expands outward up to a specified `depth`.
+    It is designed to be rate-limit friendly by pausing between API requests. It builds a
+    NetworkX DiGraph (directed graph) from the fetched data, applying limits on the number of
+    nodes and edges to prevent the graph from becoming too large.
+
+    Args:
+        start_node (str): The initial concept to begin the graph search from (e.g., "parenting").
+        depth (int): The maximum search depth from the `start_node`.
+        max_nodes (int): The maximum number of nodes allowed in the resulting graph.
+        max_edges (int): The maximum number of edges allowed in the resulting graph.
+
+    Returns:
+        nx.DiGraph: The constructed NetworkX directed graph.
+    """
     graph = nx.DiGraph()
     visited_nodes = set()
-    queue = collections.deque([(start_node.lower(), 0)])
+    queue: Deque[Tuple[str, int]] = collections.deque([(start_node.lower(), 0)])
     
     last_request_time = 0
     # Minimum interval between API requests to avoid rate limiting
@@ -48,12 +72,9 @@ def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int =
         if len(graph.nodes()) < max_nodes:
             graph.add_node(current_node)
         else:
-            # If we've hit max_nodes, don't process this node or its edges further
-            # but ensure existing nodes are processed from queue if possible
             continue
 
         if current_depth >= depth:
-            # print(f"DEBUG: Max depth ({depth}) reached for '{current_node}'.")
             continue
 
         url = f"http://api.conceptnet.io/c/en/{current_node}"
@@ -61,7 +82,6 @@ def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int =
         current_time = time.time()
         if current_time - last_request_time < min_interval:
             sleep_duration = min_interval - (current_time - last_request_time)
-            # print(f"DEBUG: Sleeping for {sleep_duration:.2f}s before next request.")
             time.sleep(sleep_duration)
         last_request_time = time.time()
 
@@ -69,15 +89,12 @@ def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int =
 
         try:
             # Added a timeout to prevent requests from hanging indefinitely
-            # 10 seconds is usually reasonable. Increase if your network is very slow.
             response = requests.get(url, params={"limit": 50}, verify=_requests_ca_bundle, timeout=10)
             response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
             data = response.json()
-            # print(f"DEBUG: Successfully fetched data for {current_node}. Edges found: {len(data.get('edges', []))}")
-
+        
             for edge in data.get('edges', []):
                 if len(graph.edges()) >= max_edges:
-                    # print(f"DEBUG: Max edges ({max_edges}) reached. Stopping edge processing for {current_node}.")
                     break
 
                 relation = edge['rel']['label']
@@ -94,9 +111,9 @@ def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int =
                 else:
                     # If max_nodes reached, don't add new nodes from edges, but existing nodes can still form edges
                     if start_label in graph and end_label in graph:
-                         graph.add_edge(start_label, end_label, relation=relation, weight=edge['weight'])
-                    continue # Stop processing this edge if it would add new nodes past limit
-                    
+                        graph.add_edge(start_label, end_label, relation=relation, weight=edge['weight'])
+                    continue 
+                
                 if start_label not in visited_nodes and len(graph.nodes()) < max_nodes:
                     queue.append((start_label, current_depth + 1))
                 if end_label not in visited_nodes and len(graph.nodes()) < max_nodes:
@@ -104,7 +121,6 @@ def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int =
         
         except requests.exceptions.Timeout:
             print(f"ERROR: Request to ConceptNet timed out for '{current_node}' after 10 seconds.")
-            # Continue to next node in queue rather than crashing
             continue
         except requests.exceptions.RequestException as e:
             print(f"ERROR: Network or API error fetching ConceptNet data for '{current_node}': {e}")
@@ -112,16 +128,16 @@ def fetch_conceptnet_relations(start_node: str, depth: int = 2, max_nodes: int =
         except json.JSONDecodeError as e:
             print(f"ERROR: JSON decoding error for '{current_node}' (invalid response from API): {e}")
             continue
-        except Exception as e: # Catch any other unexpected errors
+        except Exception as e:
             print(f"CRITICAL ERROR: Unexpected error during ConceptNet fetch for '{current_node}': {e}")
             continue
-        
+            
     print(f"DEBUG: Completed ConceptNet fetch for '{start_node}'. Final graph has {graph.number_of_nodes()} nodes and {graph.number_of_edges()} edges.")
     return graph
 
 def nx_to_pyg_data(
     nx_graph: nx.Graph,
-    feature_dim: int, # This is the total expected dimension by the GNN
+    feature_dim: int, 
     query_embedding: Optional[torch.Tensor] = None,
     context_embedding: Optional[torch.Tensor] = None
 ) -> Tuple[Data, Dict[int, str]]:
@@ -129,21 +145,30 @@ def nx_to_pyg_data(
     Converts a NetworkX graph to a PyTorch Geometric Data object.
     Includes options to inject query and context embeddings into node features.
 
+    This function takes a NetworkX graph and transforms it into the specific `Data` object
+    format required by PyTorch Geometric models. It handles the creation of a feature
+    vector for each node, which can be composed of base node features, a user query embedding,
+    and a context embedding. This allows the GNN to reason not only about the graph structure
+    but also about the specific user interaction that triggered the graph construction.
+
     Args:
         nx_graph (nx.Graph): The input NetworkX graph.
-        feature_dim (int): The desired total dimension for node features.
-                           This should match the input_dim of your GNN model.
+        feature_dim (int): The desired total dimension for node features. This must match
+                           the `input_dim` of your GNN model.
         query_embedding (Optional[torch.Tensor]): A pre-computed embedding of the user query.
-                                                   If provided, it will be integrated into node features.
+                                                  If provided, it will be concatenated into
+                                                  each node's feature vector.
         context_embedding (Optional[torch.Tensor]): A pre-computed embedding of the context
-                                                     (mood, time, weather). If provided, it will
-                                                     be integrated into node features.
+                                                    (e.g., mood, time). If provided, it will
+                                                    also be concatenated into each node's
+                                                    feature vector.
 
     Returns:
-        Tuple[Data, Dict[int, str]]: A PyG Data object and a mapping from PyG index to original node name.
+        Tuple[Data, Dict[int, str]]: A PyG Data object ready for GNN processing, and a
+                                     mapping from the new PyG node index to the original
+                                     node name.
     """
     if not nx_graph or nx_graph.number_of_nodes() == 0:
-        # Return an empty Data object with correctly shaped x, even if empty
         return Data(x=torch.empty((0, feature_dim)), edge_index=torch.empty((2,0), dtype=torch.long)), {}
 
     node_list = list(nx_graph.nodes())
@@ -153,53 +178,46 @@ def nx_to_pyg_data(
     x = []
     edge_indices = []
 
-    # Calculate sizes of query and context embeddings
+    # Calculate the size of the different feature components.
     query_embed_len = query_embedding.shape[0] if query_embedding is not None else 0
     context_embed_len = context_embedding.shape[0] if context_embedding is not None else 0
-    
-    # The remaining space after query and context is for base node features
     base_feature_size = feature_dim - query_embed_len - context_embed_len
+    
     if base_feature_size < 0:
         print(f"WARNING in nx_to_pyg_data: feature_dim ({feature_dim}) is smaller than combined embedding dimensions ({query_embed_len + context_embed_len}). "
               "Adjusting base_feature_size to 0 and potentially truncating embeddings.")
         base_feature_size = 0
-        # If combined embeddings are larger than feature_dim, truncate.
-        # This case implies an incorrect feature_dim passed or model mismatch.
-        # It's better to ensure feature_dim is calculated correctly upstream.
 
     for i, node in enumerate(node_list):
         node_features_parts = []
 
-        # 1. Base Node Features
+        # 1. Base Node Features: Create a feature vector for the node itself.
         node_base_features = np.zeros(base_feature_size)
         if 'feature' in nx_graph.nodes[node] and nx_graph.nodes[node]['feature'] is not None:
             existing_features = np.array(nx_graph.nodes[node]['feature'])
             copy_len = min(base_feature_size, len(existing_features))
             node_base_features[:copy_len] = existing_features[:copy_len]
         elif base_feature_size > 0:
-            # Add a small random component to distinguish nodes if no specific features
             node_base_features = np.random.rand(base_feature_size) * 0.1
         
-        if base_feature_size > 0: # Only append if there's actual space/features
+        if base_feature_size > 0:
             node_features_parts.append(torch.from_numpy(node_base_features).float())
 
-        # 2. Query Embedding (if provided and fits)
+        # 2. Query Embedding: Add a constant query embedding to every node.
         if query_embedding is not None and query_embed_len > 0:
             node_features_parts.append(query_embedding)
 
-        # 3. Context Embedding (if provided and fits)
+        # 3. Context Embedding: Add a constant context embedding to every node.
         if context_embedding is not None and context_embed_len > 0:
             node_features_parts.append(context_embedding)
 
-        # Concatenate all parts
+        # Concatenate all parts to form the final feature vector for this node.
         if node_features_parts:
             node_features_tensor = torch.cat(node_features_parts)
         else:
-            # If no features from any source, create a zero tensor of target dimension
             node_features_tensor = torch.zeros(feature_dim)
 
-
-        # Ensure final feature vector matches the target feature_dim
+        # Ensure the final feature vector matches the target `feature_dim`.
         if node_features_tensor.shape[0] < feature_dim:
             padding = torch.zeros(feature_dim - node_features_tensor.shape[0])
             node_features_tensor = torch.cat((node_features_tensor, padding), dim=0)
@@ -208,6 +226,7 @@ def nx_to_pyg_data(
 
         x.append(node_features_tensor)
 
+    # Build the edge index tensor for PyG from the NetworkX graph's edges.
     for u, v in nx_graph.edges():
         if u in node_to_idx and v in node_to_idx:
             edge_indices.append([node_to_idx[u], node_to_idx[v]])

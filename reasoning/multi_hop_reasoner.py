@@ -5,7 +5,7 @@ multi_hop_reasoner.py
 Implements multi-hop reasoning over knowledge graphs using a trained GNN model.
 It handles model loading, contextual data integration, inference, persona scoring,
 and subgraph visualization. This script is designed to be the core backend for
-the persona inference application.
+the persona inference application. It now also includes a baseline model for comparison.
 """
 import torch
 import networkx as nx
@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 # Local imports
 from reasoning.gat_model import GATModel
+from reasoning.simple_model import SimpleModel
 from reasoning.graph_builder import nx_to_pyg_data, fetch_conceptnet_relations
 from context.transformer_encoder import TransformerEncoder
 from context.context_encoder import ContextEncoder
@@ -31,6 +32,7 @@ from context.context_encoder import ContextEncoder
 # These are loaded only once to prevent redundant file I/O and object instantiation,
 # which significantly improves performance, especially in web frameworks like Streamlit.
 _gnn_model = None
+_baseline_model = None
 _transformer_encoder = None
 _context_encoder = None
 _model_expected_input_dim = None
@@ -103,6 +105,40 @@ def _load_gnn_model(model_path: str = "models/persona_gnn_model.pth") -> Optiona
             print(f"Dummy GNN Model initialized with input_dim={dummy_input_dim}.")
 
     return _gnn_model
+
+def _load_baseline_model(model_path: str = "models/baseline_ffn_model.pth") -> Optional[SimpleModel]:
+    """
+    Loads the trained simple feed-forward baseline model from the specified path.
+    Caches the loaded model as a global variable.
+
+    Args:
+        model_path (str): The file path to the saved PyTorch model checkpoint.
+
+    Returns:
+        Optional[SimpleModel]: The loaded baseline model, or None if loading fails.
+    """
+    global _baseline_model
+    if _baseline_model is None:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        if os.path.exists(model_path):
+            try:
+                state_dict = torch.load(model_path, map_location=device)
+                input_dim = state_dict.get('input_dim')
+                if input_dim is None:
+                    raise ValueError("Baseline model state dict is missing 'input_dim'.")
+                
+                hidden_dim = state_dict.get('hidden_dim', 64)
+                _baseline_model = SimpleModel(input_dim=input_dim, hidden_dim=hidden_dim, output_dim=OUTPUT_DIM).to(device)
+                _baseline_model.load_state_dict(state_dict['model_state_dict'])
+                _baseline_model.eval()
+                print(f"✅ Baseline FFN model loaded successfully from {model_path}.")
+            except Exception as e:
+                print(f"❌ Error loading baseline model from {model_path}: {e}")
+                _baseline_model = None
+        else:
+            print(f"⚠️ WARNING: Baseline FFN model not found at {model_path}.")
+            _baseline_model = None
+    return _baseline_model
 
 def get_transformer_encoder() -> Optional[TransformerEncoder]:
     """Returns the cached TransformerEncoder instance, initializing it if necessary."""
@@ -236,7 +272,7 @@ def interpret_gnn_output_for_persona(scores: torch.Tensor, user_query: str, user
     
     return insight
 
-def run_gnn_reasoning(
+def _run_gnn_reasoning_logic(
     query: str,
     mood: str,
     time_of_day: str,
@@ -244,20 +280,8 @@ def run_gnn_reasoning(
     ignore_context: bool = False
 ) -> Tuple[List[str], Dict[str, float], Optional[str]]:
     """
-    Main function to orchestrate the GNN reasoning process and get persona insights.
-    
-    Args:
-        query (str): The user's input query.
-        mood (str): The selected mood context.
-        time_of_day (str): The selected time of day context.
-        weather_condition (str): The selected weather condition context.
-        ignore_context (bool): If True, context embeddings are zeroed out for GNN input.
-
-    Returns:
-        Tuple[List[str], Dict[str, float], Optional[str]]: 
-        - A list of natural language persona insight strings.
-        - A dictionary of persona scores (Urgency, Emotional Distress, Practical Need, Empathy Requirement).
-        - Optional[str]: Path to the generated subgraph visualization image, or None if not generated.
+    Performs GNN-based multi-hop reasoning.
+    (This is a refactored version of the original run_gnn_reasoning function).
     """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = _load_gnn_model()
@@ -304,7 +328,6 @@ def run_gnn_reasoning(
             }, None
 
     # --- Graph Generation Logic ---
-    # Attempt to build a graph from multiple relevant terms in the query.
     keywords_to_search = [word.lower() for word in query.split() if len(word) > 2] # Simple heuristic: words > 2 chars
     
     combined_graph = nx.DiGraph() 
@@ -314,16 +337,14 @@ def run_gnn_reasoning(
         keywords_to_search = [query.lower()] # Fallback to full query if no suitable keywords
 
     for keyword in keywords_to_search:
-        # Fetch a small subgraph for each keyword
         temp_graph = fetch_conceptnet_relations(keyword, depth=1, max_nodes=5, max_edges=5)
         if temp_graph and temp_graph.number_of_nodes() > 0:
             combined_graph = nx.compose(combined_graph, temp_graph)
             fetched_any_graph = True
-            if combined_graph.number_of_nodes() > 50: # Cap the total graph size for performance
+            if combined_graph.number_of_nodes() > 50:
                 print("INFO: Combined graph reached max node limit for efficiency.")
                 break
     
-    # If no graph could be built for any keyword, try with the full query as a single node
     if not fetched_any_graph and query.strip():
         print(f"WARNING: No graph could be built for individual keywords. Attempting with full query as a single entity: '{query}'.")
         combined_graph = fetch_conceptnet_relations(query.lower().strip(), depth=1, max_nodes=10, max_edges=10)
@@ -338,7 +359,6 @@ def run_gnn_reasoning(
     if not nx_graph or nx_graph.number_of_nodes() == 0:
         print(f"WARNING: No valid ConceptNet graph could be built for query '{query}'. Returning default scores.")
     else:
-        # Convert the NetworkX graph to a PyTorch Geometric Data object
         pyg_data, _ = nx_to_pyg_data(
             nx_graph,
             feature_dim=total_input_feature_dim,
@@ -354,7 +374,6 @@ def run_gnn_reasoning(
             with torch.no_grad():
                 out = model(data)
                 
-            # Aggregate node-level output to a single graph-level output
             if out.dim() == 2 and out.size(0) == 1 and out.size(1) == OUTPUT_DIM:
                 graph_level_logits = out.squeeze(0)
             elif out.dim() == 2 and out.size(1) == OUTPUT_DIM:
@@ -367,7 +386,6 @@ def run_gnn_reasoning(
 
             graph_level_scores_tensor = torch.sigmoid(graph_level_logits)
 
-            # Visualize and save the graph for a visual explanation
             explanation_path = visualize_subgraph(
                 nx_graph, 
                 query, 
@@ -390,3 +408,95 @@ def run_gnn_reasoning(
     }
     
     return insight_list, scores_dict, explanation_path
+
+def _run_baseline_reasoning_logic(
+    query: str, 
+    mood: str, 
+    time_of_day: str, 
+    weather_condition: str, 
+    ignore_context: bool = False
+) -> Tuple[List[str], Dict[str, float], Optional[str]]:
+    """
+    Performs reasoning using a simple feed-forward baseline model.
+    It processes concatenated query and context embeddings without a knowledge graph.
+    """
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = _load_baseline_model()
+    if model is None:
+        return ["Error: Baseline model could not be loaded."], \
+            {"Urgency": 0.0, "Emotional Distress": 0.0, "Practical Need": 0.0, "Empathy Requirement": 0.0}, \
+            None
+
+    transformer_encoder = get_transformer_encoder()
+    context_encoder = get_context_encoder()
+
+    query_embedding_tensor = None
+    if transformer_encoder:
+        query_embedding_tensor = transformer_encoder.encode(query).squeeze(0).to(device)
+    else:
+        print("WARNING: TransformerEncoder not available for baseline. Using zero embedding.")
+        query_embedding_tensor = torch.zeros(DEFAULT_TRANSFORMER_EMBEDDING_DIM).to(device)
+
+    context_embedding_tensor = None
+    if not ignore_context:
+        if context_encoder:
+            context_embedding_tensor = context_encoder.encode(mood, time_of_day, weather_condition).to(device)
+        else:
+            print("WARNING: ContextEncoder not available for baseline. Using zero embedding.")
+            context_embedding_tensor = torch.zeros(DEFAULT_CONTEXT_TOTAL_DIM).to(device)
+    else:
+        context_embedding_tensor = torch.zeros(DEFAULT_CONTEXT_TOTAL_DIM).to(device)
+
+    # Concatenate the embeddings to create a single input tensor for the FFN
+    combined_embedding = torch.cat((query_embedding_tensor, context_embedding_tensor), dim=0).unsqueeze(0)
+    
+    model.eval()
+    with torch.no_grad():
+        out = model(combined_embedding)
+        scores_tensor = torch.sigmoid(out).squeeze()
+
+    insights = interpret_gnn_output_for_persona(
+        scores_tensor.cpu(),
+        query,
+        mood,
+        time_of_day,
+        weather_condition
+    )
+
+    scores_dict = {
+        "Urgency": scores_tensor[0].item(),
+        "Emotional Distress": scores_tensor[1].item(),
+        "Practical Need": scores_tensor[2].item(),
+        "Empathy Requirement": scores_tensor[3].item()
+    }
+    
+    # Baseline model does not produce a graph visualization
+    return insights, scores_dict, None 
+
+# --- New Public-Facing Function ---
+def run_persona_reasoning(
+    model_type: str,
+    query: str,
+    mood: str,
+    time_of_day: str,
+    weather_condition: str,
+    ignore_context: bool = False
+) -> Tuple[List[str], Dict[str, float], Optional[str]]:
+    """
+    Main entry point for persona reasoning. Selects and runs the specified model.
+    
+    Args:
+        model_type (str): The name of the model to use ('GNN' or 'Baseline').
+        ... (other arguments are the same)
+
+    Returns:
+        The results from the selected reasoning model.
+    """
+    if model_type == 'GNN':
+        return _run_gnn_reasoning_logic(query, mood, time_of_day, weather_condition, ignore_context)
+    elif model_type == 'Baseline FFN':
+        return _run_baseline_reasoning_logic(query, mood, time_of_day, weather_condition, ignore_context)
+    else:
+        error_message = f"Error: Invalid model type specified: '{model_type}'."
+        print(error_message)
+        return [error_message], {}, None

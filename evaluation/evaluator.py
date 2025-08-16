@@ -1,81 +1,113 @@
-# evaluation/evaluator.py
 """
 evaluator.py
 
-Evaluates the persona inference system by comparing GNN-derived scores and persona insights
-against expected values from a test dataset. Calculates metrics such as MSE and semantic similarity
-(with and without context) and saves detailed results for analysis.
+This module provides a comprehensive framework for evaluating the persona inference system, 
+with a specific focus on the contributions of the Graph Neural Network (GNN) and dynamic context. 
+It defines the `evaluate_persona_inference` function, which systematically compares the system's 
+outputs against expected values from a predefined test dataset. The evaluation measures include 
+Mean Squared Error (MSE) for GNN-derived persona scores and semantic similarity for natural 
+language insights. This allows for a quantitative assessment of how effectively the system 
+identifies and processes a user's situational and emotional context.
 """
+
 import json
 import os
 import sys
 import numpy as np
 from sklearn.metrics import mean_squared_error, cosine_similarity
 import torch
+from typing import List, Dict, Any, Optional
 
-# Add project root to sys.path to allow imports from subdirectories
+# Add the project root to the system path to allow for imports from other modules.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from common_sense_client import get_subgraph_for_query
-from reasoning.multi_hop_reasoner import run_gnn_reasoning # This is the function we're testing
+# Import necessary components from the project.
+from knowledge.common_sense_client import get_subgraph_for_query
+from reasoning.multi_hop_reasoner import run_gnn_reasoning
 from context.transformer_encoder import TransformerEncoder
-# You might need an LLM for semantic similarity if evaluating 'persona_insight' text
-# from llm.llm_responder import LLMResponder # If you want to use an LLM for semantic similarity eval
 
-# Ensure output directories exist
+# Ensure that the necessary output directories exist.
 os.makedirs("evaluation", exist_ok=True)
 os.makedirs("models", exist_ok=True)
 
 def calculate_text_similarity(text1: str, text2: str, encoder: TransformerEncoder) -> float:
     """
-    Calculates semantic similarity between two texts using a TransformerEncoder.
-    This requires a TransformerEncoder initialized for the evaluation.
+    Calculates the semantic similarity between two text strings using a TransformerEncoder.
+
+    This function encodes both texts into vector embeddings and then computes the cosine
+    similarity between them. A similarity score of 1.0 indicates identical meaning, while
+    0.0 indicates no semantic relationship.
+
+    Args:
+        text1 (str): The first text string.
+        text2 (str): The second text string.
+        encoder (TransformerEncoder): An initialized TransformerEncoder instance.
+
+    Returns:
+        float: The cosine similarity score, ranging from -1.0 to 1.0. Returns 0.0
+               if the encoder is not available or an error occurs.
     """
     if not encoder or encoder.embedding_dim == 0:
         print("WARNING: TransformerEncoder not available for semantic similarity. Returning 0.")
         return 0.0
     
     try:
-        embed1 = encoder.encode(text1).unsqueeze(0) # Add batch dimension
-        embed2 = encoder.encode(text2).unsqueeze(0) # Add batch dimension
+        # Encode both texts to get their embeddings.
+        embed1 = encoder.encode(text1).unsqueeze(0)  # Add a batch dimension.
+        embed2 = encoder.encode(text2).unsqueeze(0)  # Add a batch dimension.
         
-        # Cosine similarity expects inputs to be normalized or it handles it.
-        # sentence-transformers embeddings are usually normalized.
+        # Calculate cosine similarity using numpy.
         similarity = cosine_similarity(embed1.numpy(), embed2.numpy())[0][0]
         return float(similarity)
     except Exception as e:
         print(f"Error calculating semantic similarity: {e}. Returning 0.")
         return 0.0
 
-def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
+def evaluate_persona_inference(data_path: str = "evaluation/evaluation_data.json"):
     """
-    Evaluates the persona inference system using a predefined dataset.
-    Compares GNN-derived scores and potentially semantic similarity of insights.
+    Evaluates the persona inference system's performance on a predefined test dataset.
+
+    This is the main evaluation function. It iterates through a series of test cases,
+    running the GNN-based reasoning system both with and without dynamic context.
+    It then compares the system's output (persona scores and natural language insights)
+    against the ground truth provided in the test data. The function calculates and
+    reports key metrics like average MSE for scores and average cosine similarity for insights.
+
+    Args:
+        data_path (str): The file path to the JSON test data.
     """
-    with open(data_path, 'r') as f:
-        test_cases = json.load(f)
+    # Load the evaluation test cases from the specified JSON file.
+    try:
+        with open(data_path, 'r') as f:
+            test_cases: List[Dict[str, Any]] = json.load(f)
+    except FileNotFoundError:
+        print(f"ERROR: Evaluation data file not found at '{data_path}'. Please create it.")
+        return
 
-    results = []
-    # Initialize a TransformerEncoder for semantic similarity calculation if needed
-    # (This is separate from the one used in the GNN pipeline, or can be shared if carefully managed)
-    text_encoder_for_eval = TransformerEncoder() if TransformerEncoder else None
+    results: List[Dict[str, Any]] = []
+    # Initialize a TransformerEncoder for calculating text similarity.
+    text_encoder_for_eval: Optional[TransformerEncoder] = None
+    try:
+        text_encoder_for_eval = TransformerEncoder()
+    except Exception as e:
+        print(f"Failed to initialize TransformerEncoder for evaluation: {e}")
 
-    total_mse_scores_with_context = []
-    total_mse_scores_without_context = []
-    total_text_sim_with_context = []
-    total_text_sim_without_context = []
+    total_mse_scores_with_context: List[float] = []
+    total_mse_scores_without_context: List[float] = []
+    total_text_sim_with_context: List[float] = []
+    total_text_sim_without_context: List[float] = []
 
     score_labels = ["Urgency", "Emotional Distress", "Practical Need", "Empathy Requirement"]
 
     for i, case in enumerate(test_cases):
         print(f"\n--- Evaluating Test Case {i+1}: {case['query']} ---")
-        query = case['query']
-        mood = case.get('mood', 'Neutral')
-        time_of_day = case.get('time_of_day', 'Day')
-        weather_condition = case.get('weather_condition', 'Clear')
-        expected_scores = np.array(list(case['expected_scores'].values()))
+        query: str = case['query']
+        mood: str = case.get('mood', 'Neutral')
+        time_of_day: str = case.get('time_of_day', 'Day')
+        weather_condition: str = case.get('weather_condition', 'Clear')
+        expected_scores: np.ndarray = np.array(list(case['expected_scores'].values()))
 
-        current_case_result = {
+        current_case_result: Dict[str, Any] = {
             "query": query,
             "mood": mood,
             "time_of_day": time_of_day,
@@ -85,19 +117,19 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
             "expected_persona_insight_without_context": case['expected_persona_insight_without_context']
         }
 
-        # --- Run with Context ---
+        # --- Run the Reasoning Pipeline with Context ---
         print("  Running with context...")
         subgraph_with_context = get_subgraph_for_query(query)
         if subgraph_with_context and subgraph_with_context.number_of_nodes() > 0:
             try:
-                # We expect run_gnn_reasoning to return the raw GNN scores as the 5th element
+                # The run_gnn_reasoning function is expected to return the GNN scores.
                 _, _, _, persona_insight_with_context, predicted_scores_with_context = run_gnn_reasoning(
                     subgraph_with_context, query, mood, time_of_day, weather_condition,
                     ignore_context_in_interpretation=False
                 )
                 
-                # Check if predicted_scores_with_context is not None and is a numpy array
                 if predicted_scores_with_context is not None and isinstance(predicted_scores_with_context, np.ndarray):
+                    # Calculate MSE for the predicted scores.
                     mse_scores_with_context = mean_squared_error(expected_scores, predicted_scores_with_context)
                     total_mse_scores_with_context.append(mse_scores_with_context)
                     current_case_result['predicted_scores_with_context'] = predicted_scores_with_context.tolist()
@@ -109,7 +141,7 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
 
                 current_case_result['persona_insight_with_context_generated'] = persona_insight_with_context
 
-                # Evaluate semantic similarity of generated insight with expected insight
+                # Evaluate semantic similarity of the generated insight.
                 if text_encoder_for_eval:
                     sim_with_context = calculate_text_similarity(
                         persona_insight_with_context,
@@ -120,7 +152,6 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
                     current_case_result['text_similarity_with_context'] = sim_with_context
                 else:
                     current_case_result['text_similarity_with_context'] = "N/A (Encoder not loaded)"
-
             except Exception as e:
                 print(f"    Error during context-aware reasoning for query '{query}': {e}")
                 current_case_result['persona_insight_with_context_generated'] = f"ERROR: {e}"
@@ -132,15 +163,15 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
             current_case_result['mse_scores_with_context'] = None
             current_case_result['text_similarity_with_context'] = None
 
-
-        # --- Run without Context ---
+        # --- Run the Reasoning Pipeline without Context ---
         print("  Running without context...")
-        subgraph_without_context = get_subgraph_for_query(query) # Subgraph stays the same
+        subgraph_without_context = get_subgraph_for_query(query)
         if subgraph_without_context and subgraph_without_context.number_of_nodes() > 0:
             try:
+                # Use default/neutral context and instruct the function to ignore it.
                 _, _, _, persona_insight_without_context, predicted_scores_without_context = run_gnn_reasoning(
-                    subgraph_without_context, query, "Neutral", "Day", "Clear", # Pass default/neutral context
-                    ignore_context_in_interpretation=True # Crucially, ignore in interpretation
+                    subgraph_without_context, query, "Neutral", "Day", "Clear",
+                    ignore_context_in_interpretation=True
                 )
 
                 if predicted_scores_without_context is not None and isinstance(predicted_scores_without_context, np.ndarray):
@@ -165,7 +196,6 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
                     current_case_result['text_similarity_without_context'] = sim_without_context
                 else:
                     current_case_result['text_similarity_without_context'] = "N/A (Encoder not loaded)"
-
             except Exception as e:
                 print(f"    Error during context-agnostic reasoning for query '{query}': {e}")
                 current_case_result['persona_insight_without_context_generated'] = f"ERROR: {e}"
@@ -179,7 +209,7 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
 
         results.append(current_case_result)
 
-    # --- Aggregate and Report ---
+    # --- Aggregate and Report Final Results ---
     print(f"\n--- Evaluation Summary for {len(results)} Test Cases ---")
 
     if total_mse_scores_with_context:
@@ -194,24 +224,24 @@ def evaluate_persona_inference(data_path="evaluation/evaluation_data.json"):
     else:
         print("No valid MSE data for GNN Scores (Without Context).")
 
-    if total_text_sim_with_context and not all(s == "N/A (Encoder not loaded)" for s in total_text_sim_with_context):
+    if total_text_sim_with_context and any(isinstance(s, float) for s in total_text_sim_with_context):
         avg_text_sim_with = np.mean([s for s in total_text_sim_with_context if isinstance(s, float)])
         print(f"Average Text Similarity (With Context): {avg_text_sim_with:.4f} (Cosine Similarity)")
     else:
         print("No valid Text Similarity data (With Context).")
 
-    if total_text_sim_without_context and not all(s == "N/A (Encoder not loaded)" for s in total_text_sim_without_context):
+    if total_text_sim_without_context and any(isinstance(s, float) for s in total_text_sim_without_context):
         avg_text_sim_without = np.mean([s for s in total_text_sim_without_context if isinstance(s, float)])
         print(f"Average Text Similarity (Without Context): {avg_text_sim_without:.4f} (Cosine Similarity)")
     else:
         print("No valid Text Similarity data (Without Context).")
 
+    # Save detailed results to a JSON file for further analysis.
     print("\nDetailed results saved to evaluation_results.json")
-
     with open("evaluation_results.json", 'w') as f:
         json.dump(results, f, indent=4)
 
 if __name__ == "__main__":
-    # To run this, ensure your GNN model is in models/persona_gnn_model.pth
-    # Or, if you don't have one trained, it will use a dummy model.
+    # The main entry point for running the evaluation script.
+    # It assumes the necessary GNN model checkpoint and evaluation data are in place.
     evaluate_persona_inference()

@@ -1,6 +1,11 @@
-# train_gnn.py
 """
-Train GNN script (ConceptNet + ATOMIC). Usage examples in README section.
+train_gat.py
+
+This script is the main training pipeline for the Graph Attention Network (GAT)
+model. It demonstrates how to leverage external knowledge graphs like ConceptNet
+and ATOMIC to perform multi-hop reasoning. The script loads these knowledge
+graphs, builds a combined graph, generates mock data with subgraphs centered
+around a query, and then trains a GAT model.
 """
 import os
 import sys
@@ -18,7 +23,10 @@ import networkx as nx
 
 
 # local imports (ensure repo root on sys.path)
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+# This handles the case where the script is run from a sub-directory
+# For the purpose of this example, we assume `reasoning` and `context`
+# are at the same level as `train_gat.py`'s parent directory.
+sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.join(__file__, '..'))))
 
 from reasoning.gat_model import GATModel
 from context.transformer_encoder import TransformerEncoder
@@ -48,6 +56,17 @@ DEFAULT_TRANSFORMER_EMBED_DIM = 384
 
 # ---------- utility functions ----------
 def build_merged_kg(concept_triples, atomic_triples):
+    """
+    Combines ConceptNet and ATOMIC triples into a single NetworkX DiGraph.
+    
+    Args:
+        concept_triples (list): A list of (head, relation, tail) tuples from ConceptNet.
+        atomic_triples (list): A list of (head, relation, tail) tuples from ATOMIC.
+    
+    Returns:
+        tuple: A tuple containing the merged NetworkX graph, a node-to-ID mapping,
+               and a relation-to-ID mapping.
+    """
     all_triples = []
     all_triples.extend([(h, r, t, 'conceptnet') for (h, r, t) in concept_triples])
     all_triples.extend([(h, r, t, 'atomic') for (h, r, t) in atomic_triples])
@@ -70,6 +89,22 @@ def build_merged_kg(concept_triples, atomic_triples):
     return G, node2id, rel2id
 
 def fetch_combined_relations(merged_graph, term, depth=1, max_nodes=50, max_edges=200):
+    """
+    Fetches a subgraph from the merged knowledge graph around a given term.
+    
+    This function performs a breadth-first search to find relevant nodes and edges
+    up to a specified depth.
+    
+    Args:
+        merged_graph (nx.DiGraph): The combined ConceptNet and ATOMIC graph.
+        term (str): The starting node (e.g., a word from the user's query).
+        depth (int): The number of hops to search from the starting term.
+        max_nodes (int): The maximum number of nodes to include in the subgraph.
+        max_edges (int): The maximum number of edges to include.
+    
+    Returns:
+        nx.DiGraph: The extracted subgraph.
+    """
     term = term.lower()
     if merged_graph is None or term not in merged_graph:
         return nx.DiGraph()
@@ -97,17 +132,33 @@ def fetch_combined_relations(merged_graph, term, depth=1, max_nodes=50, max_edge
             break
     sub = merged_graph.subgraph(nodes_seen).copy()
     if sub.number_of_edges() > max_edges:
+        # Prune nodes with the lowest degrees to stay within max_edges limit
         degs = sorted(sub.degree, key=lambda x: x[1], reverse=True)
         keep_nodes = set([n for n, _ in degs[:max_nodes]])
         sub = sub.subgraph(keep_nodes).copy()
     return sub
 
 def convert_nx_to_pyg_or_fallback(nx_graph, query_embedding, context_embedding, feature_dim):
+    """
+    Converts a NetworkX graph to a PyTorch Geometric data object.
+    
+    This function uses a helper function from `reasoning.graph_builder` but includes
+    a fallback mechanism in case that import fails, ensuring the script can still run.
+    
+    Args:
+        nx_graph (nx.DiGraph): The input NetworkX graph.
+        query_embedding (torch.Tensor): The encoded query vector.
+        context_embedding (torch.Tensor): The encoded context vector.
+        feature_dim (int): The target dimension for the node features.
+    
+    Returns:
+        tuple: A tuple with the PyTorch Geometric data object and a node mapping.
+    """
     if nx_to_pyg_data is not None:
         try:
             pyg, mapping = nx_to_pyg_data(nx_graph, feature_dim=feature_dim,
-                                          query_embedding=query_embedding,
-                                          context_embedding=context_embedding)
+                                            query_embedding=query_embedding,
+                                            context_embedding=context_embedding)
             return pyg, mapping
         except Exception as e:
             print(f"[train] nx_to_pyg_data failed: {e}. Falling back to helper converter.")
@@ -123,10 +174,15 @@ def convert_nx_to_pyg_or_fallback(nx_graph, query_embedding, context_embedding, 
         c_vec = context_embedding if context_embedding is not None else torch.zeros(context_encoder.total_context_dim)
         q_vec = q_vec.cpu() if hasattr(q_vec, 'cpu') else q_vec
         c_vec = c_vec.cpu() if hasattr(c_vec, 'cpu') else c_vec
+        
+        # Create a feature vector for each node by combining query and context embeddings
         node_feat = torch.zeros((n, feature_dim), dtype=torch.float)
+        # Note: This is a simple fallback. The actual `nx_to_pyg_data` might be more sophisticated.
         for i in range(n):
             node_feat[i, :q_vec.shape[0]] = q_vec
             node_feat[i, q_vec.shape[0]:q_vec.shape[0]+c_vec.shape[0]] = c_vec
+        
+        # Build the edge index
         edge_index = [[], []]
         for u, v in nx_graph.edges():
             edge_index[0].append(nodes.index(u))
@@ -159,7 +215,7 @@ mock_queries = [
 ]
 
 persona_labels = {
-    "My laptop screen cracked.": (0.8, 0.6, 0.9, 0.5),
+    "My laptop screen cracked.": (0.8, 0.6, 0.9, 0.5), # urgency, empathy, proactiveness, emotional
     "I lost my pet cat.": (0.9, 0.9, 0.2, 0.9),
     "My car broke down on the highway.": (0.9, 0.7, 0.95, 0.4),
     "I successfully finished my project!": (0.1, 0.1, 0.1, 0.2),
@@ -174,6 +230,18 @@ persona_labels = {
 }
 
 def adjust_label_for_context(label_tuple, mood, time_of_day, weather):
+    """
+    Adjusts a persona label based on contextual cues.
+    
+    Args:
+        label_tuple (tuple): The base persona label (urgency, empathy, proactiveness, emotional).
+        mood (str): The user's mood.
+        time_of_day (str): The time of day.
+        weather (str): The weather condition.
+    
+    Returns:
+        tuple: The contextually adjusted persona label.
+    """
     u, e, p, emp = label_tuple
     # small heuristics
     if mood.lower() in ["stressed", "anxious", "frustrated"]:
@@ -189,6 +257,22 @@ def adjust_label_for_context(label_tuple, mood, time_of_day, weather):
     return (u, e, p, emp)
 
 def generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_samples=100, max_nodes=20):
+    """
+    Generates a mock dataset of PyTorch Geometric graphs for training.
+    
+    For each sample, it picks a query, fetches a subgraph from the merged KG,
+    encodes the query and context, and creates a PyG data object with labels.
+    
+    Args:
+        merged_graph (nx.DiGraph): The combined ConceptNet and ATOMIC graph.
+        transformer_encoder (TransformerEncoder): Encoder for the query text.
+        context_encoder (ContextEncoder): Encoder for the context.
+        num_samples (int): The number of samples to generate.
+        max_nodes (int): The maximum number of nodes in each subgraph.
+    
+    Returns:
+        list: A list of PyTorch Geometric Data objects.
+    """
     dataset = []
     skipped = 0
     for _ in tqdm(range(num_samples), desc="Generating mock graphs"):
@@ -197,38 +281,48 @@ def generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_s
         time_of_day = random.choice(list(context_encoder.time_of_day_map.keys()))
         weather = random.choice(list(context_encoder.weather_condition_map.keys()))
         seed = next((w for w in query_text.split() if len(w) > 2), query_text).lower()
+        
+        # Build the subgraph for the query
         if merged_graph is not None:
             nx_sub = fetch_combined_relations(merged_graph, seed, depth=1, max_nodes=max_nodes, max_edges=200)
         elif fetch_conceptnet_relations is not None:
             nx_sub = fetch_conceptnet_relations(seed, depth=1, max_nodes=max_nodes, max_edges=200)
         else:
             nx_sub = nx.DiGraph()
+            
         if not nx_sub or nx_sub.number_of_nodes() == 0:
             skipped += 1
             continue
+            
+        # Encode query and context
         q_emb = transformer_encoder.encode(query_text)
         c_emb = context_encoder.encode(mood, time_of_day, weather)
+        
+        # Convert to PyTorch Geometric format
         pyg, mapping = convert_nx_to_pyg_or_fallback(nx_sub, q_emb, c_emb, TOTAL_INPUT_DIM)
         if pyg is None or getattr(pyg, 'x', None) is None or pyg.x.numel() == 0:
             skipped += 1
             continue
+            
+        # Get and adjust labels
         lbl = adjust_label_for_context(persona_labels[query_text], mood, time_of_day, weather)
         pyg.y = torch.tensor([lbl[0], lbl[1], lbl[2], lbl[3]], dtype=torch.float)
         dataset.append(pyg)
+        
     print(f"[train] Generated {len(dataset)} samples. Skipped {skipped}.")
     return dataset
 
 # ---------- main ----------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--conceptnet", type=str, default="data/conceptnet/conceptnet-assertions-5.7.0.csv.gz")
-    parser.add_argument("--atomic", type=str, default="data/atomic2020/v4_atomic_trn.csv")
-    parser.add_argument("--max-conceptnet", type=int, default=DEFAULT_MAX_CONCEPTNET)
-    parser.add_argument("--max-atomic", type=int, default=DEFAULT_MAX_ATOMIC)
-    parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS)
-    parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH)
-    parser.add_argument("--debug", action="store_true", help="short, small run for debug")
-    parser.add_argument("--save_path", type=str, default="models/persona_gnn_model.pth", help="Path to save the trained model checkpoint.")
+    parser = argparse.ArgumentParser(description="Train a GAT model for persona inference.")
+    parser.add_argument("--conceptnet", type=str, default="data/conceptnet/conceptnet-assertions-5.7.0.csv.gz", help="Path to the ConceptNet file.")
+    parser.add_argument("--atomic", type=str, default="data/atomic2020/v4_atomic_trn.csv", help="Path to the ATOMIC file.")
+    parser.add_argument("--max-conceptnet", type=int, default=DEFAULT_MAX_CONCEPTNET, help="Max triples from ConceptNet.")
+    parser.add_argument("--max-atomic", type=int, default=DEFAULT_MAX_ATOMIC, help="Max triples from ATOMIC.")
+    parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS, help="Number of training epochs.")
+    parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH, help="Batch size for training.")
+    parser.add_argument("--debug", action="store_true", help="Run a short, small run for debug.")
+    parser.add_argument("--save_path", type=str, default="models/persona_gat_model.pth", help="Path to save the trained model checkpoint.")
     args = parser.parse_args()
 
     if args.debug:
@@ -266,7 +360,7 @@ if __name__ == "__main__":
     transformer_encoder = TransformerEncoder()  # will fallback to deterministic embedding if model not available
     context_encoder = ContextEncoder()
 
-    TRANSFORMER_EMBEDDING_DIM = transformer_encoder.embedding_dim if transformer_encoder.embedding_dim > 0 else DEFAULT_TRANSFORMER_EMBED_DIM
+    TRANSFORMER_EMBEDDING_DIM = transformer_encoder.embedding_dim if hasattr(transformer_encoder, 'embedding_dim') and transformer_encoder.embedding_dim > 0 else DEFAULT_TRANSFORMER_EMBED_DIM
     CONTEXT_DIM = context_encoder.total_context_dim
     TOTAL_INPUT_DIM = TRANSFORMER_EMBEDDING_DIM + CONTEXT_DIM + BASE_NODE_FEATURE_DIM
     print(f"[train] TOTAL_INPUT_DIM={TOTAL_INPUT_DIM}")
@@ -290,6 +384,7 @@ if __name__ == "__main__":
         val_set = dataset[:val_split]
         train_set = dataset[val_split:]
         train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
+        
         model.train()
         epoch_loss = 0.0
         for batch in tqdm(train_loader, desc="batches"):
@@ -309,6 +404,7 @@ if __name__ == "__main__":
             optimizer.step()
             epoch_loss += loss.item()
         avg_train_loss = epoch_loss / max(1, len(train_loader))
+        
         # validation
         model.eval()
         val_loss = 0.0
@@ -327,9 +423,10 @@ if __name__ == "__main__":
                     val_loss += criterion(pred, target).item()
             val_loss = val_loss / max(1, len(val_loader))
         print(f"[train] epoch_loss={avg_train_loss:.4f}, val_loss={val_loss:.4f}")
+        
         # checkpoint
         os.makedirs("models", exist_ok=True)
-        ckpt_path = f"models/persona_gnn_epoch{epoch}.pth"
+        ckpt_path = f"models/persona_gat_epoch{epoch}.pth"
         torch.save({
             "model_state_dict": model.state_dict(),
             "input_dim": TOTAL_INPUT_DIM,
@@ -338,9 +435,11 @@ if __name__ == "__main__":
             "epoch": epoch
         }, ckpt_path)
         print(f"[train] saved checkpoint: {ckpt_path}")
+        
+        # Save best model
         if val_loss < best_val:
             best_val = val_loss
-            best_path = "models/persona_gnn_model.pth"
+            best_path = "models/persona_gat_model.pth"
             torch.save({
                 "model_state_dict": model.state_dict(),
                 "input_dim": TOTAL_INPUT_DIM,
@@ -349,4 +448,5 @@ if __name__ == "__main__":
                 "epoch": epoch
             }, best_path)
             print(f"[train] saved best model to {best_path} (val_loss improved)")
+            
     print("[train] training complete")

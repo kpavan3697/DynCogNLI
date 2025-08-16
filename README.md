@@ -21,7 +21,7 @@ pip install -r requirements.txt
 Small Training command
 
 ```bash
-python train_gnn.py --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv --atomic data/atomic2020/train.csv --epochs 10 --batch-size 8
+python train_gat.py --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv --atomic data/atomic2020/train.csv --epochs 10 --batch-size 8
 ```
 
 inspect_checkpoint.py: Checkpoint Inspection Tool
@@ -38,13 +38,13 @@ Usage:
 To run the script, provide the path to your checkpoint file as a command-line argument.
 
 ```bash
-python tools/inspect_checkpoint.py models/persona_gnn_model.pth
+python tools/inspect_checkpoint.py models/persona_gat_model.pth
 ```
 
-The eval_gnn.py script is a command-line tool designed to evaluate the performance of the trained Graph Neural Network (GNN) model. It serves as the primary method for generating quantitative metrics to assess the model's effectiveness in persona inference.
+The eval_gat.py script is a command-line tool designed to evaluate the performance of the trained GAT model. It serves as the primary method for generating quantitative metrics to assess the model's effectiveness in persona inference.
 
 Key Functions:
-Model Loading: The script loads the pre-trained GNN model from a specified checkpoint file (.pth) into memory.
+Model Loading: The script loads the pre-trained GAT model from a specified checkpoint file (.pth) into memory.
 
 Data Preparation: It prepares the evaluation data, which consists of subgraphs and their corresponding ground-truth persona labels.
 
@@ -54,8 +54,8 @@ Metrics Calculation: It compares the model's predictions against the ground-trut
 
 Results Reporting: Finally, it reports these metrics to the console or a file, providing the empirical evidence needed to validate the model's performance in your thesis.
 
-To run eval_gnn.py use the following command
+To run eval_gat.py use the following command
 
 ```bash
-python -m tools.eval_gnn --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv --atomic data/atomic2020/train.csv --checkpoint models/persona_gnn_epoch10.pth --device cpu --terms laptop phone car "flight delay"
+ python -m tools.eval_gat --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv --atomic data/atomic2020/train.csv --checkpoint models/persona_gat_model.pth --device cpu --terms laptop phone car "flight delay"
 ```

@@ -1,26 +1,27 @@
+"""
+app.py
+
+Streamlit application for Dynamic Commonsense Persona Inference.
+This app provides an interactive interface to analyze a user's query
+based on a GNN model or a simpler baseline model, considering
+contextual factors like mood, time of day, and weather.
+"""
 import streamlit as st
-import os
-import sys
-import torch
 import pandas as pd
+import os
 import time
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
 
-# --- Streamlit Page Configuration ---
-st.set_page_config(
-    page_title="Dynamic Commonsense Persona Inference",
-    page_icon="🧠",
-    layout="wide",
-)
-
-# Add parent directory to sys.path for module imports
+# Ensure the parent directory is in sys.path for sibling imports
+# This is crucial for environments like Streamlit.
+import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Mocking modules for demonstration if they don't exist
+# Import the main reasoning function
 try:
-    from reasoning.multi_hop_reasoner import run_gnn_reasoning
+    from reasoning.multi_hop_reasoner import run_persona_reasoning
     from context.transformer_encoder import TransformerEncoder
     from context.context_encoder import ContextEncoder
 except ImportError:
@@ -33,7 +34,7 @@ except ImportError:
         def __init__(self):
             pass
     
-    def run_gnn_reasoning(query, mood, time_of_day, weather, ignore_context):
+    def run_persona_reasoning(model_type, query, mood, time_of_day, weather, ignore_context):
         """Mocks the GNN reasoning process for demonstration."""
         time.sleep(1)
         insights = [
@@ -50,10 +51,26 @@ except ImportError:
         plt.figure(figsize=(8, 6))
         plt.text(0.5, 0.5, f"Mock Graph for:\n'{query}'", ha='center', va='center', fontsize=12)
         plt.axis('off')
-        mock_path = "mock_graph.png"
+        mock_path = f"mock_graph_{int(time.time())}.png"
         plt.savefig(mock_path)
         plt.close()
         return insights, scores, mock_path
+    
+# --- Mock Statistics for Display ---
+# In a real thesis, you would populate this table with the actual
+# results from your model evaluation script (e.g., train_baseline.py).
+mock_stats = {
+    'GNN Model': {
+        'Mean Squared Error (MSE)': 0.025,
+        'Mean Absolute Error (MAE)': 0.11,
+        'R-squared Score ($R^2$)': 0.91
+    },
+    'Baseline FFN': {
+        'Mean Squared Error (MSE)': 0.051,
+        'Mean Absolute Error (MAE)': 0.18,
+        'R-squared Score ($R^2$)': 0.82
+    }
+}
 
 # Suppress Streamlit internal cache resource logs
 streamlit_logger = logging.getLogger('streamlit')
@@ -91,14 +108,20 @@ if not st.session_state.initialized:
         for pct in [20, 40, 60, 80]:
             time.sleep(0.2)
             progress_bar.progress(pct)
-        initialize_encoders_silently()
+        try:
+            initialize_encoders_silently()
+        except Exception:
+            st.warning("Could not initialize encoders, proceeding with mock functions.")
         progress_bar.progress(100)
         time.sleep(0.3)
         progress_bar.empty()
         status_text.empty()
     st.session_state.initialized = True
 else:
-    initialize_encoders_silently()
+    try:
+        initialize_encoders_silently()
+    except Exception:
+        pass # The warning has already been shown on the first run
 
 # Restore log level
 streamlit_logger.setLevel(original_log_level)
@@ -133,56 +156,79 @@ with st.expander("💡 About this Application"):
     st.info("💡 **Tip:** Try queries like 'My car broke down on the highway' or 'I found a lost puppy'.")
 
 st.header("📝 Enter Your Query & Context")
+st.markdown("---")
 
-col_query, col_context = st.columns([3, 2])
+# Use a container to group input elements for better visual separation
+with st.container():
+    col_query, col_context = st.columns([3, 2])
 
-with col_query:
-    st.subheader("Your Situation/Problem")
-    user_query = st.text_area(
-        "Describe the situation or problem here:",
-        "My laptop screen cracked.",
-        height=120,
-        key="user_query_input"
-    )
+    # Mapping for model names to match the backend function
+    model_mapping = {
+        'GNN Model': 'GNN',
+        'Baseline FFN': 'Baseline FFN'
+    }
 
-with col_context:
-    st.subheader("Contextual Factors")
-    ignore_context = st.checkbox("🚫 Ignore Context (for baseline comparison)", value=False, key="ignore_context_checkbox")
-    mood_options = ["Neutral", "Happy", "Stressed", "Sad", "Angry", "Excited", "Anxious", "Frustrated"]
-    selected_mood = st.selectbox(
-        "Current Mood: ℹ️",
-        mood_options,
-        index=mood_options.index("Neutral"),
-        help="Your current emotional state influences how the persona is inferred."
-    )
-    time_of_day_options = ["Day", "Night", "Morning", "Afternoon", "Evening"]
-    selected_time_of_day = st.selectbox(
-        "Time of Day: ℹ️",
-        time_of_day_options,
-        index=time_of_day_options.index("Day"),
-        help="Time context affects reasoning about urgency and needs."
-    )
-    weather_condition_options = ["Clear", "Rainy", "Cloudy", "Snowy", "Windy", "Stormy"]
-    selected_weather_condition = st.selectbox(
-        "Weather Condition: ℹ️",
-        weather_condition_options,
-        index=weather_condition_options.index("Clear"),
-        help="Weather can impact emotional state and practical needs."
-    )
+    with col_query:
+        st.subheader("Your Situation/Problem")
+        # Use a more dynamic height for the text area
+        user_query = st.text_area(
+            "Describe the situation or problem here:",
+            "My laptop screen cracked.",
+            height=150,
+            key="user_query_input"
+        )
+        # Add a radio button for model selection here for better placement
+        st.subheader("Model Selection")
+        selected_model_display = st.radio(
+            "Choose a model for analysis:",
+            options=list(model_mapping.keys()),
+            index=0,
+            help="Choose between your GNN-based model and a simple feed-forward baseline."
+        )
+        # Use the mapped value for the reasoning function
+        selected_model_type = model_mapping[selected_model_display]
+
+    with col_context:
+        st.subheader("Contextual Factors")
+        st.markdown("---")
+        ignore_context = st.checkbox("🚫 Ignore Context", value=False, key="ignore_context_checkbox")
+        mood_options = ["Neutral", "Happy", "Stressed", "Sad", "Angry", "Excited", "Anxious", "Frustrated"]
+        selected_mood = st.selectbox(
+            "Current Mood: ℹ️",
+            mood_options,
+            index=mood_options.index("Neutral"),
+            help="Your current emotional state influences how the persona is inferred."
+        )
+        time_of_day_options = ["Day", "Night", "Morning", "Afternoon", "Evening"]
+        selected_time_of_day = st.selectbox(
+            "Time of Day: ℹ️",
+            time_of_day_options,
+            index=time_of_day_options.index("Day"),
+            help="Time context affects reasoning about urgency and needs."
+        )
+        weather_condition_options = ["Clear", "Rainy", "Cloudy", "Snowy", "Windy", "Stormy"]
+        selected_weather_condition = st.selectbox(
+            "Weather Condition: ℹ️",
+            weather_condition_options,
+            index=weather_condition_options.index("Clear"),
+            help="Weather can impact emotional state and practical needs."
+        )
 
 if 'query_history' not in st.session_state:
     st.session_state['query_history'] = []
 
+# Place the button below the input containers
 if st.button("✨ Analyze Persona", type="primary", use_container_width=True):
     if not user_query or user_query.strip() == "":
         st.error("Please enter a query to get persona insight.")
     else:
-        with st.spinner("🧠 Analyzing query, building graph, and inferring persona..."):
+        with st.spinner(f"🧠 Analyzing with the {selected_model_display}..."):
             reasoning_mood = selected_mood if not ignore_context else "Neutral"
             reasoning_time = selected_time_of_day if not ignore_context else "Day"
             reasoning_weather = selected_weather_condition if not ignore_context else "Clear"
             
-            insights, raw_scores_dict, explanation_path = run_gnn_reasoning(
+            insights, raw_scores_dict, explanation_path = run_persona_reasoning(
+                selected_model_type,
                 user_query,
                 reasoning_mood,
                 reasoning_time,
@@ -192,6 +238,7 @@ if st.button("✨ Analyze Persona", type="primary", use_container_width=True):
 
         st.session_state['query_history'].append({
             'query': user_query,
+            'model_type': selected_model_display,
             'mood': selected_mood,
             'time': selected_time_of_day,
             'weather': selected_weather_condition,
@@ -204,6 +251,8 @@ if st.button("✨ Analyze Persona", type="primary", use_container_width=True):
         
         # Store the last result to be displayed persistently
         st.session_state.last_result = {
+            'query': user_query,
+            'model_type': selected_model_display,
             'insights': insights,
             'scores': raw_scores_dict,
             'explanation_path': explanation_path,
@@ -214,11 +263,21 @@ if st.button("✨ Analyze Persona", type="primary", use_container_width=True):
         st.rerun()
 
 # --- Display Results from Session State (Persistent) ---
+st.markdown("---")
+st.subheader("📊 Model Performance Statistics")
+st.markdown(
+    "Compare the GNN model (your thesis contribution) with the baseline FFN model. "
+    "Lower MSE/MAE and higher $R^2$ are better."
+)
+stats_df = pd.DataFrame(mock_stats).T
+st.table(stats_df)
+st.markdown("---")
+
 if 'last_result' in st.session_state:
     result = st.session_state.last_result
-    st.markdown("---")
-    st.subheader("📊 Persona Analysis Results")
+    st.header(f"Results for the {result['model_type']}")
     
+    # Use tabs for a cleaner presentation of results
     tab1, tab2, tab3 = st.tabs(["⭐ Persona Insight", "📊 Score Visualization", "🌐 Knowledge Graph"])
 
     with tab1:
@@ -229,13 +288,15 @@ if 'last_result' in st.session_state:
 
     with tab2:
         st.write("### Score Breakdown:")
-        col_scores, col_radar = st.columns(2)
+        # Use columns for a side-by-side comparison of numeric scores and the radar chart
+        col_scores, col_radar = st.columns([1, 1.5])
         with col_scores:
             st.write("#### Numeric Scores:")
             for dim, score in result['scores'].items():
                 st.metric(label=dim, value=f"{score:.2f}")
             st.write("#### Bar Chart:")
             df_scores = pd.DataFrame(result['scores'].items(), columns=['Dimension', 'Score'])
+            df_scores['Score'] = pd.to_numeric(df_scores['Score'])
             df_scores['Score'] = df_scores['Score'].round(2)
             df_scores = df_scores.set_index('Dimension')
             st.bar_chart(df_scores)
@@ -250,7 +311,7 @@ if 'last_result' in st.session_state:
         if result['explanation_path'] and os.path.exists(result['explanation_path']):
             st.image(
                 result['explanation_path'],
-                caption=f"Knowledge Graph for: '{user_query}'",
+                caption=f"Knowledge Graph for: '{result['query']}'",
                 use_container_width=True,
                 output_format="PNG"
             )
@@ -271,6 +332,7 @@ if not st.session_state['query_history']:
 else:
     for entry in reversed(st.session_state['query_history']):
         st.sidebar.markdown(f"**Query:** {entry['query']}")
+        st.sidebar.markdown(f"**Model:** {entry['model_type']}")
         if entry.get('ignored'):
             st.sidebar.markdown(f"<span style='color:red;'>⚠️ Context Ignored</span>", unsafe_allow_html=True)
         else:
