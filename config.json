@@ -1,0 +1,12 @@
+{
+    "paths": {
+        "conceptnet_csv": "data/conceptnet/conceptnet-assertions-5.6.0.csv",
+        "gnn_model_checkpoint": "models/persona_gat_model.pth",
+        "evaluation_data": "evaluation/evaluation_data.json"
+    },
+    "gnn": {
+        "embedding_model": "all-MiniLM-L6-v2",
+        "max_hops": 3,
+        "max_nodes": 500
+    }
+}

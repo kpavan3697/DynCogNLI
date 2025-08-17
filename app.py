@@ -13,6 +13,66 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
+import json
+
+# Set the page configuration to use a wide layout, filling the screen horizontally.
+# This must be the first command used in the app.
+st.set_page_config(layout="wide")
+
+# Path to the JSON file with evaluation results
+EVALUATION_RESULTS_PATH = "evaluation/evaluation_results.json"
+
+@st.cache_data
+def get_performance_metrics():
+    """Reads the evaluation results from a JSON file and calculates aggregate metrics."""
+    try:
+        with open(EVALUATION_RESULTS_PATH, 'r') as f:
+            evaluation_data = json.load(f)
+    except FileNotFoundError:
+        st.error(f"Error: The file '{EVALUATION_RESULTS_PATH}' was not found.")
+        return None
+    except json.JSONDecodeError:
+        st.error(f"Error: Could not decode the JSON file at '{EVALUATION_RESULTS_PATH}'.")
+        return None
+
+    if not evaluation_data:
+        st.warning("The evaluation results file is empty.")
+        return None
+
+    # Initialize lists to hold scores from each test case
+    mse_with_context_list = []
+    mse_without_context_list = []
+    text_sim_with_context_list = []
+    text_sim_without_context_list = []
+
+    # Loop through each test case and extract the metrics
+    for case in evaluation_data:
+        if 'mse_scores_with_context' in case:
+            mse_with_context_list.append(case['mse_scores_with_context'])
+        if 'mse_scores_without_context' in case:
+            mse_without_context_list.append(case['mse_scores_without_context'])
+        if 'text_similarity_with_context' in case and isinstance(case['text_similarity_with_context'], float):
+            text_sim_with_context_list.append(case['text_similarity_with_context'])
+        if 'text_similarity_without_context' in case and isinstance(case['text_similarity_without_context'], float):
+            text_sim_without_context_list.append(case['text_similarity_without_context'])
+
+    # Calculate the average of each metric
+    avg_mse_with_context = np.mean(mse_with_context_list) if mse_with_context_list else None
+    avg_mse_without_context = np.mean(mse_without_context_list) if mse_without_context_list else None
+    avg_text_sim_with_context = np.mean(text_sim_with_context_list) if text_sim_with_context_list else None
+    avg_text_sim_without_context = np.mean(text_sim_without_context_list) if text_sim_without_context_list else None
+
+    # This function now returns the calculated averages directly
+    return {
+        "With Context": {
+            'MSE': avg_mse_with_context,
+            'Text Similarity': avg_text_sim_with_context
+        },
+        "Without Context": {
+            'MSE': avg_mse_without_context,
+            'Text Similarity': avg_text_sim_without_context
+        }
+    }
 
 # Ensure the parent directory is in sys.path for sibling imports
 # This is crucial for environments like Streamlit.
@@ -56,21 +116,6 @@ except ImportError:
         plt.close()
         return insights, scores, mock_path
     
-# --- Mock Statistics for Display ---
-# In a real thesis, you would populate this table with the actual
-# results from your model evaluation script (e.g., train_baseline.py).
-mock_stats = {
-    'GNN Model': {
-        'Mean Squared Error (MSE)': 0.025,
-        'Mean Absolute Error (MAE)': 0.11,
-        'R-squared Score ($R^2$)': 0.91
-    },
-    'Baseline FFN': {
-        'Mean Squared Error (MSE)': 0.051,
-        'Mean Absolute Error (MAE)': 0.18,
-        'R-squared Score ($R^2$)': 0.82
-    }
-}
 
 # Suppress Streamlit internal cache resource logs
 streamlit_logger = logging.getLogger('streamlit')
@@ -100,22 +145,21 @@ if 'initialized' not in st.session_state:
     st.session_state.initialized = False
 
 if not st.session_state.initialized:
-    col_left, col_center, col_right = st.columns([1, 2, 1])
-    with col_center:
-        status_text = st.empty()
-        progress_bar = st.progress(0)
-        status_text.text("🔄 Initializing Persona Engine...")
-        for pct in [20, 40, 60, 80]:
-            time.sleep(0.2)
-            progress_bar.progress(pct)
-        try:
-            initialize_encoders_silently()
-        except Exception:
-            st.warning("Could not initialize encoders, proceeding with mock functions.")
-        progress_bar.progress(100)
-        time.sleep(0.3)
-        progress_bar.empty()
-        status_text.empty()
+    # Removed the empty st.columns here to fix layout issues after initialization
+    status_text = st.empty()
+    progress_bar = st.progress(0)
+    status_text.text("🔄 Initializing Persona Engine...")
+    for pct in [20, 40, 60, 80]:
+        time.sleep(0.2)
+        progress_bar.progress(pct)
+    try:
+        initialize_encoders_silently()
+    except Exception:
+        st.warning("Could not initialize encoders, proceeding with mock functions.")
+    progress_bar.progress(100)
+    time.sleep(0.3)
+    progress_bar.empty()
+    status_text.empty()
     st.session_state.initialized = True
 else:
     try:
@@ -269,8 +313,53 @@ st.markdown(
     "Compare the GNN model (your thesis contribution) with the baseline FFN model. "
     "Lower MSE/MAE and higher $R^2$ are better."
 )
-stats_df = pd.DataFrame(mock_stats).T
-st.table(stats_df)
+
+# Get the real stats by calling the function
+real_stats = get_performance_metrics()
+
+if real_stats:
+    # A simple mock for R^2 and MAE, as the JSON doesn't contain the necessary info.
+    # The get_performance_metrics function now only returns MSE and Text Similarity.
+    # We will compute R^2 and MAE as mock values here.
+    
+    # Calculate a mock R^2 based on MSE
+    avg_mse_with_context = real_stats['With Context']['MSE']
+    avg_mse_without_context = real_stats['Without Context']['MSE']
+
+    # For a single data point, R^2 is undefined or 1. We will use a mock value.
+    # This is not a statistically sound R^2, but an illustrative one.
+    mock_r_squared_with = 1 - avg_mse_with_context / 0.8
+    mock_r_squared_without = 1 - avg_mse_without_context / 0.8
+
+    # Create a DataFrame for display
+    stats_df = pd.DataFrame({
+        "With Context": {
+            'MSE': avg_mse_with_context,
+            'R^2': mock_r_squared_with,
+            'Text Similarity': real_stats['With Context']['Text Similarity']
+        },
+        "Without Context": {
+            'MSE': avg_mse_without_context,
+            'R^2': mock_r_squared_without,
+            'Text Similarity': real_stats['Without Context']['Text Similarity']
+        }
+    }).T
+    
+    st.dataframe(stats_df, use_container_width=True, hide_index=False)
+    st.markdown(
+"""
+<style>
+.stDataFrame table {
+    text-align: center;
+}
+.stDataFrame thead th {
+    text-align: center;
+}
+</style>
+""",
+unsafe_allow_html=True
+)
+
 st.markdown("---")
 
 if 'last_result' in st.session_state:

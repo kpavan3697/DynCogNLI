@@ -40,5 +40,243 @@
         },
         "expected_persona_insight_with_context": "Low urgency, low emotional distress. User is seeking practical suggestions for entertainment, fitting for a rainy evening. A cheerful, helpful tone is appropriate.",
         "expected_persona_insight_without_context": "Low urgency, low emotional distress. User is seeking practical suggestions for entertainment. A cheerful, helpful tone is appropriate."
+    },
+    {
+        "query": "My laptop screen is cracked and it's making a strange sound.",
+        "mood": "frustrated",
+        "time_of_day": "morning",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.8,
+            "emotional_distress": 0.6,
+            "practical_need": 0.9,
+            "empathy_requirement": 0.7
+        },
+        "expected_persona_insight_with_context": "The user is frustrated with a broken laptop. The situation is urgent for a work or school context. Practical advice on repair options is needed, with a sympathetic tone due to the frustration.",
+        "expected_persona_insight_without_context": "The user has a broken laptop. They need practical advice on how to fix it."
+    },
+    {
+        "query": "My phone battery is at 1% and I'm lost in a new city.",
+        "mood": "panicked",
+        "time_of_day": "evening",
+        "weather_condition": "windy",
+        "expected_scores": {
+            "urgency": 1.0,
+            "emotional_distress": 0.95,
+            "practical_need": 1.0,
+            "empathy_requirement": 0.9
+        },
+        "expected_persona_insight_with_context": "This is a critical situation requiring immediate action. The user is lost with a dying phone in an unfamiliar, windy environment. They are feeling panicked and need urgent, clear, step-by-step practical advice and reassurance.",
+        "expected_persona_insight_without_context": "The user's phone battery is low and they are lost. They need urgent, practical advice."
+    },
+    {
+        "query": "I just received an unexpected package in the mail.",
+        "mood": "surprised",
+        "time_of_day": "morning",
+        "weather_condition": "sunny",
+        "expected_scores": {
+            "urgency": 0.1,
+            "emotional_distress": 0.2,
+            "practical_need": 0.3,
+            "empathy_requirement": 0.3
+        },
+        "expected_persona_insight_with_context": "The user has received an unexpected item and is curious. There is no urgency or emotional distress. A simple, helpful, and slightly curious response is appropriate, offering help to identify the package.",
+        "expected_persona_insight_without_context": "The user has received an unexpected package. A simple, helpful response is appropriate, offering help to identify the package."
+    },
+    {
+        "query": "I am looking for some delicious dinner recipes for my family.",
+        "mood": "happy",
+        "time_of_day": "afternoon",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.2,
+            "emotional_distress": 0.1,
+            "practical_need": 0.7,
+            "empathy_requirement": 0.4
+        },
+        "expected_persona_insight_with_context": "The user is happy and planning a pleasant family meal. The need is practical (recipes) and the tone should be cheerful and helpful, suggesting family-friendly meals. The context of 'happy' mood should influence the kind of recipes suggested.",
+        "expected_persona_insight_without_context": "The user needs dinner recipes. The tone should be helpful and friendly."
+    },
+    {
+        "query": "I can't find my car keys anywhere in the house.",
+        "mood": "frustrated",
+        "time_of_day": "morning",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.8,
+            "emotional_distress": 0.7,
+            "practical_need": 0.9,
+            "empathy_requirement": 0.8
+        },
+        "expected_persona_insight_with_context": "The user is highly frustrated and in a hurry during the morning. The need for a solution is urgent and practical. A calm, methodical, and empathetic response is needed, guiding them through a search strategy.",
+        "expected_persona_insight_without_context": "The user can't find their car keys. They need practical advice on how to find them."
+    },
+    {
+        "query": "I’m stranded at a remote bus stop in a blizzard.",
+        "mood": "terrified",
+        "time_of_day": "night",
+        "weather_condition": "snowstorm",
+        "expected_scores": {
+            "urgency": 1.0,
+            "emotional_distress": 1.0,
+            "practical_need": 1.0,
+            "empathy_requirement": 1.0
+        },
+        "expected_persona_insight_with_context": "The user is in a life-threatening situation. They are terrified and facing extreme weather conditions at a remote location during the night. The response must be critically urgent and provide immediate, life-saving advice with maximum empathy and reassurance.",
+        "expected_persona_insight_without_context": "The user is stranded at a bus stop. They need help."
+    },
+    {
+        "query": "The lights in my house just went out and the storm is getting worse.",
+        "mood": "worried",
+        "time_of_day": "evening",
+        "weather_condition": "stormy",
+        "expected_scores": {
+            "urgency": 0.8,
+            "emotional_distress": 0.8,
+            "practical_need": 0.9,
+            "empathy_requirement": 0.8
+        },
+        "expected_persona_insight_with_context": "The user is in a state of concern due to a power outage during a worsening storm. The practical need for light and safety is urgent. The response should be empathetic and provide immediate safety tips.",
+        "expected_persona_insight_without_context": "The user's lights are out. They need practical advice on what to do."
+    },
+    {
+        "query": "I am feeling lonely today.",
+        "mood": "sad",
+        "time_of_day": "afternoon",
+        "weather_condition": "cloudy",
+        "expected_scores": {
+            "urgency": 0.3,
+            "emotional_distress": 0.9,
+            "practical_need": 0.4,
+            "empathy_requirement": 1.0
+        },
+        "expected_persona_insight_with_context": "The user is feeling sad and lonely. There is no practical urgency but a very high need for emotional support and empathy. The response should be comforting and offer gentle suggestions for social interaction.",
+        "expected_persona_insight_without_context": "The user is feeling sad. The response should be empathetic and supportive."
+    },
+    {
+        "query": "My flight has been cancelled due to heavy fog.",
+        "mood": "disappointed",
+        "time_of_day": "morning",
+        "weather_condition": "foggy",
+        "expected_scores": {
+            "urgency": 0.7,
+            "emotional_distress": 0.6,
+            "practical_need": 0.8,
+            "empathy_requirement": 0.7
+        },
+        "expected_persona_insight_with_context": "The user is disappointed and facing an urgent practical problem. The foggy weather is the cause of their travel disruption. The response should be sympathetic and provide clear, practical steps for rebooking or accommodations.",
+        "expected_persona_insight_without_context": "The user's flight has been cancelled. They need practical advice on what to do next."
+    },
+    {
+        "query": "I am planning a trip to the beach tomorrow.",
+        "mood": "excited",
+        "time_of_day": "evening",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.1,
+            "emotional_distress": 0.1,
+            "practical_need": 0.5,
+            "empathy_requirement": 0.3
+        },
+        "expected_persona_insight_with_context": "The user is excited and planning a fun activity. The need is to get practical information for their trip (e.g., weather forecast, packing list). The tone should be upbeat and helpful.",
+        "expected_persona_insight_without_context": "The user is planning a trip to the beach. They need practical advice."
+    },
+    {
+        "query": "I'm worried about my elderly parents who live far away.",
+        "mood": "worried",
+        "time_of_day": "evening",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.5,
+            "emotional_distress": 0.9,
+            "practical_need": 0.6,
+            "empathy_requirement": 1.0
+        },
+        "expected_persona_insight_with_context": "The user has high emotional distress and is worried about their parents. The need is both for emotional support and practical advice on how to check on them. A deeply empathetic response is critical.",
+        "expected_persona_insight_without_context": "The user is worried about their parents. They need emotional support and some advice."
+    },
+    {
+        "query": "There's a fire alarm going off in my building!",
+        "mood": "scared",
+        "time_of_day": "afternoon",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 1.0,
+            "emotional_distress": 1.0,
+            "practical_need": 1.0,
+            "empathy_requirement": 0.9
+        },
+        "expected_persona_insight_with_context": "This is a critical, life-threatening situation. The user is scared and in immediate danger. The response must be critically urgent, providing immediate safety instructions and a calm, reassuring tone.",
+        "expected_persona_insight_without_context": "There is a fire alarm. The user needs urgent help."
+    },
+    {
+        "query": "My car's engine light just came on.",
+        "mood": "calm",
+        "time_of_day": "morning",
+        "weather_condition": "sunny",
+        "expected_scores": {
+            "urgency": 0.5,
+            "emotional_distress": 0.3,
+            "practical_need": 0.7,
+            "empathy_requirement": 0.5
+        },
+        "expected_persona_insight_with_context": "The user is calm despite a potential car issue. The problem is not immediately critical but requires practical steps. A calm, helpful, and non-alarming response is appropriate, providing steps to diagnose the issue.",
+        "expected_persona_insight_without_context": "The user's car has an issue. They need practical advice on what to do next."
+    },
+    {
+        "query": "I need to find a public restroom urgently.",
+        "mood": "stressed",
+        "time_of_day": "afternoon",
+        "weather_condition": "hot",
+        "expected_scores": {
+            "urgency": 0.9,
+            "emotional_distress": 0.7,
+            "practical_need": 1.0,
+            "empathy_requirement": 0.7
+        },
+        "expected_persona_insight_with_context": "The user has an urgent, immediate practical need. The stress and hot weather amplify the urgency. The response must be quick and direct, providing a solution (like directions to the nearest restroom) with a sympathetic tone.",
+        "expected_persona_insight_without_context": "The user needs to find a restroom urgently. They need directions."
+    },
+    {
+        "query": "I am looking for a gift for my friend's birthday.",
+        "mood": "happy",
+        "time_of_day": "evening",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.2,
+            "emotional_distress": 0.1,
+            "practical_need": 0.7,
+            "empathy_requirement": 0.4
+        },
+        "expected_persona_insight_with_context": "The user is happy and planning to celebrate. The need is practical (finding a gift). The tone should be cheerful and provide creative, thoughtful suggestions, acknowledging the occasion.",
+        "expected_persona_insight_without_context": "The user needs gift ideas for a friend's birthday. The tone should be helpful."
+    },
+    {
+        "query": "I just found a lost dog by the side of the road.",
+        "mood": "sympathetic",
+        "time_of_day": "morning",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 0.9,
+            "emotional_distress": 0.8,
+            "practical_need": 0.9,
+            "empathy_requirement": 1.0
+        },
+        "expected_persona_insight_with_context": "The user has a time-sensitive and emotionally taxing situation. They have found a lost dog and need immediate, practical steps on how to help it. The response must be highly empathetic and provide clear, actionable advice.",
+        "expected_persona_insight_without_context": "The user has found a lost dog. They need practical steps on how to help it."
+    },
+    {
+        "query": "My internet is down and I have a video conference in 5 minutes.",
+        "mood": "frantic",
+        "time_of_day": "morning",
+        "weather_condition": "clear",
+        "expected_scores": {
+            "urgency": 1.0,
+            "emotional_distress": 0.8,
+            "practical_need": 1.0,
+            "empathy_requirement": 0.8
+        },
+        "expected_persona_insight_with_context": "The user is facing a critically urgent technical issue with a strict deadline. The mood is frantic, indicating high stress. The response must provide immediate, concise, and prioritized troubleshooting steps.",
+        "expected_persona_insight_without_context": "The user's internet is down. They need troubleshooting steps."
     }
 ]
