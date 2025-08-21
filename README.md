@@ -118,9 +118,14 @@ DynCogNLI/
 ├── train_gat.py               # GAT model training script
 ├── train_baseline.py          # Baseline model training script
 ├── run_inference.py           # Inference pipeline
+├── test.py                    # Test runner / utility
+├── TrainingResult.png         # Training results visualization
+├── mock_graph.png             # Example graph visualization
+│
 ├── context/                   # Context management and encoders
 │   ├── context_encoder.py
 │   ├── context_manager.py
+│   ├── proj_structure.py
 │   ├── real_time_updater.py
 │   ├── response_generator.py
 │   └── transformer_encoder.py
