@@ -1,10 +1,10 @@
-# Set environment variables
-$env:STREAMLIT_WATCHER_TYPE = "none"
-$env:OMP_NUM_THREADS = "1"
-$env:KMP_DUPLICATE_LIB_OK = "TRUE"
+:: Set environment variables
+set STREAMLIT_WATCHER_TYPE=none
+set OMP_NUM_THREADS=1
+set KMP_DUPLICATE_LIB_OK=TRUE
 
-# Optional: Activate Python environment
-# & "$HOME\.venv\Scripts\Activate.ps1"
+:: Optional: Activate Python environment
+:: call "%USERPROFILE%\.venv\Scripts\activate.bat"
 
-# Run Streamlit
+:: Run Streamlit
 streamlit run app.py --server.runOnSave false

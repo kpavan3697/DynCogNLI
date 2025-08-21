@@ -9,35 +9,63 @@ reasons about different concepts.
 """
 import argparse
 import torch
-from reasoning.gat_model import GATModel
-from preprocessing.conceptnet_loader import load_conceptnet
-from preprocessing.atomic_loader import load_atomic_tsv
-from reasoning.graph_builder import nx_to_pyg_data, fetch_conceptnet_relations
+import os
 import networkx as nx
+import peewee
 from typing import List, Dict, Tuple
+
+# --- ConceptNet Lite Integration ---
+import conceptnet_lite
+from conceptnet_lite import Label, Relation, Language
+from preprocessing.atomic_loader import load_atomic_tsv
+from reasoning.gat_model import GATModel
+from reasoning.graph_builder import nx_to_pyg_data
+
+# Function to fetch ConceptNet triples from the database
+def fetch_conceptnet_relations_db(term, depth=1, max_nodes=50, max_edges=200):
+    """
+    Fetches a subgraph from the ConceptNet database around a given term.
+    This function uses conceptnet_lite to perform the search.
+    """
+    triples = set()
+    nodes_seen = set()
+    queue = [(term.lower(), 0)]
+    
+    while queue and len(nodes_seen) < max_nodes:
+        current_term, current_depth = queue.pop(0)
+        
+        if current_depth > depth or current_term in nodes_seen:
+            continue
+        
+        nodes_seen.add(current_term)
+        
+        try:
+            label_obj = Label.get(current_term, language='en')
+            relations = list(label_obj.relations)
+            
+            for rel in relations:
+                h = rel.start.text.lower()
+                t = rel.end.text.lower()
+                r = rel.relation.name
+                triples.add((h, r, t))
+                
+                if h not in nodes_seen and len(nodes_seen) < max_nodes:
+                    queue.append((h, current_depth + 1))
+                if t not in nodes_seen and len(nodes_seen) < max_nodes:
+                    queue.append((t, current_depth + 1))
+        except peewee.DoesNotExist:
+            continue
+        
+    return list(triples)
 
 def main(args: argparse.Namespace):
     """
     Main function to run the GAT model evaluation.
-
-    The function orchestrates the entire evaluation process:
-    1. Loads the trained GAT model from a checkpoint.
-    2. Combines data from ConceptNet and ATOMIC to form a comprehensive knowledge graph.
-    3. Iterates through a list of user-provided terms.
-    4. For each term, it fetches a relevant subgraph from the knowledge base.
-    5. Converts the subgraph into a PyTorch Geometric `Data` object.
-    6. Runs the GAT model in evaluation mode to get output scores.
-    7. Prints the final persona dimension scores for each term.
-
-    Args:
-        args: Command-line arguments from argparse.
     """
     device = torch.device(args.device if torch.cuda.is_available() or args.device == 'cpu' else 'cpu')
     print(f"Using device: {device}")
 
     # --- Model Loading ---
-    # Load the trained model checkpoint from the specified path.
-    # It dynamically retrieves the model's dimensions to ensure the architecture matches.
     try:
         checkpoint = torch.load(args.checkpoint, map_location=device)
         input_dim = checkpoint.get("input_dim", 128)
@@ -50,29 +78,27 @@ def main(args: argparse.Namespace):
         print(f"An error occurred while loading the checkpoint: {e}")
         return
 
-    # Instantiate the GATModel with the loaded dimensions.
     model = GATModel(input_dim=input_dim, hidden_dim=hidden_dim, output_dim=output_dim)
-    # Load the saved model weights into the new model instance.
     model.load_state_dict(checkpoint["model_state_dict"])
     model.to(device)
-    # Set the model to evaluation mode, which disables dropout and other training-specific layers.
     model.eval()
 
     # --- Knowledge Graph Construction ---
-    # Load triples from both ConceptNet and ATOMIC datasets.
-    concept_triples = load_conceptnet(args.conceptnet)
+    os.makedirs("data/conceptnet", exist_ok=True)
+    db_path = "data/conceptnet/conceptnet.db"
+    print(f"Connecting to ConceptNet Lite at {db_path}")
+    conceptnet_lite.connect(db_path)
+    
     atomic_triples = load_atomic_tsv(args.atomic)
-
-    # Combine the triples and build a single NetworkX graph.
-    all_triples: List[Tuple[str, str, str]] = [(h, r, t) for h, r, t in concept_triples] + [(h, r, t) for h, r, t in atomic_triples]
-    G = nx.DiGraph()
-    for h, r, t in all_triples:
-        G.add_node(h)
-        G.add_node(t)
-        G.add_edge(h, t, rel=r)
+    print(f"[ATOMIC] Loaded {len(atomic_triples)} triples from {args.atomic}")
+    
+    atomic_graph = nx.DiGraph()
+    for h, r, t in atomic_triples:
+        atomic_graph.add_node(h)
+        atomic_graph.add_node(t)
+        atomic_graph.add_edge(h, t, rel=r)
 
     # --- Term-based Evaluation ---
-    # The script evaluates the model on a list of terms provided by the user.
     terms = args.terms
     if not terms:
         print("No terms provided. Please pass --terms term1 term2 ...")
@@ -80,35 +106,50 @@ def main(args: argparse.Namespace):
 
     for term in terms:
         print(f"\nEvaluating term: {term}")
-        # Retrieve a relevant subgraph centered around the term from the knowledge graph.
-        subgraph = fetch_conceptnet_relations(term, depth=1, max_nodes=20, max_edges=50)
-        if subgraph.number_of_nodes() == 0:
+        
+        # New: Split the term into keywords and remove stopwords
+        keywords = [word for word in term.lower().split() if word not in ["i", "am", "a", "an", "the", "feeling"]]
+        
+        subgraph = nx.DiGraph()
+        found_triples = False
+
+        # Loop through each keyword to find relevant ConceptNet and ATOMIC triples
+        for keyword in keywords:
+            # Fetch ConceptNet triples for the keyword
+            concept_triples = fetch_conceptnet_relations_db(keyword, depth=1, max_nodes=20, max_edges=50)
+            if concept_triples:
+                found_triples = True
+            
+            for h, r, t in concept_triples:
+                subgraph.add_node(h)
+                subgraph.add_node(t)
+                subgraph.add_edge(h, t, rel=r)
+            
+            # Find and add ATOMIC triples that contain the keyword
+            for h, r, t in atomic_triples:
+                if keyword in h.lower() or keyword in t.lower():
+                    subgraph.add_node(h)
+                    subgraph.add_node(t)
+                    subgraph.add_edge(h, t, rel=r)
+                    found_triples = True
+        
+        if not found_triples or subgraph.number_of_nodes() == 0:
             print(f"No subgraph found for {term}")
             continue
 
-        # Convert the NetworkX subgraph into a PyTorch Geometric (PyG) data object.
-        # Placeholder feature vectors are assigned since no text/context embeddings are used here.
-        # The `feature_dim` is taken from the loaded model to ensure compatibility.
         pyg_data, _ = nx_to_pyg_data(subgraph, feature_dim=input_dim, query_embedding=None, context_embedding=None)
         pyg_data = pyg_data.to(device)
 
-        # Run the model without calculating gradients to get the final output scores.
-        # This is a key step for inference, as it saves computation.
         with torch.no_grad():
             output = model(pyg_data)
-            # Print the final output tensor, which contains the persona dimension scores.
             print(f"Model output for term '{term}': {output.cpu().numpy()}")
 
 if __name__ == "__main__":
-    # --- Command-line Argument Parser ---
-    # This block defines the arguments required to run the script from the command line.
     parser = argparse.ArgumentParser(description="Evaluate a trained GAT model on specific terms.")
-    parser.add_argument("--conceptnet", type=str, required=True, help="Path to the ConceptNet CSV file.")
     parser.add_argument("--atomic", type=str, required=True, help="Path to the ATOMIC TSV file.")
     parser.add_argument("--checkpoint", type=str, required=True, help="Path to the trained model checkpoint (.pth file).")
     parser.add_argument("--device", type=str, default="cpu", help="Device to use for evaluation (e.g., 'cpu' or 'cuda').")
     parser.add_argument("--terms", nargs="+", help="List of terms to evaluate (e.g., 'car', 'laptop').")
     args = parser.parse_args()
 
-    # Call the main function to start the evaluation process.
     main(args)

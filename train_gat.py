@@ -21,11 +21,20 @@ import torch.optim as optim
 from torch_geometric.data import DataLoader
 import networkx as nx
 
+import peewee # For handling database exceptions
+
+# --- ConceptNet Lite Integration for efficient data access ---
+import conceptnet_lite
+from conceptnet_lite import Label, Relation, Language
+os.makedirs("data/conceptnet", exist_ok=True)
+db_path = "data/conceptnet/conceptnet.db"
+# This connects to the DB; it will download and build it on the first run.
+conceptnet_lite.connect(db_path)
 
 # local imports (ensure repo root on sys.path)
 # This handles the case where the script is run from a sub-directory
-# For the purpose of this example, we assume `reasoning` and `context`
-# are at the same level as `train_gat.py`'s parent directory.
+# For the purpose of this example, we assume reasoning and context
+# are at the same level as train_gat.py's parent directory.
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.join(__file__, '..'))))
 
 from reasoning.gat_model import GATModel
@@ -33,18 +42,15 @@ from context.transformer_encoder import TransformerEncoder
 from context.context_encoder import ContextEncoder
 
 # loaders
-from preprocessing.conceptnet_loader import load_conceptnet
 from preprocessing.atomic_loader import load_atomic_tsv
 
-# small helper: fetch_conceptnet_relations fallback if needed
+# small helper: fetch_conceptnet_relations fallback is no longer needed.
 try:
-    from reasoning.graph_builder import nx_to_pyg_data, fetch_conceptnet_relations
+    from reasoning.graph_builder import nx_to_pyg_data
 except Exception:
     nx_to_pyg_data = None
-    fetch_conceptnet_relations = None
 
 # ---------- default config ----------
-DEFAULT_MAX_CONCEPTNET = 100000  # safe default for dev; set higher for full data
 DEFAULT_MAX_ATOMIC = 50000
 DEFAULT_EPOCHS = 3
 DEFAULT_BATCH = 8
@@ -55,6 +61,45 @@ BASE_NODE_FEATURE_DIM = 16  # small base features
 DEFAULT_TRANSFORMER_EMBED_DIM = 384
 
 # ---------- utility functions ----------
+
+def fetch_conceptnet_relations_db(term, depth=1, max_nodes=50, max_edges=200):
+    """
+    Fetches a subgraph from the ConceptNet database around a given term.
+    This function uses conceptnet_lite to perform the search.
+    """
+    triples = set()
+    nodes_seen = set()
+    queue = [(term.lower(), 0)]
+    
+    while queue and len(nodes_seen) < max_nodes:
+        current_term, current_depth = queue.pop(0)
+        
+        if current_depth > depth or current_term in nodes_seen:
+            continue
+        
+        nodes_seen.add(current_term)
+        
+        try:
+            # Query for related concepts in English
+            label_obj = Label.get(current_term, language='en')
+            relations = list(label_obj.relations)
+            
+            for rel in relations:
+                h = rel.start.text.lower()
+                t = rel.end.text.lower()
+                r = rel.relation.name
+                triples.add((h, r, t))
+                
+                # Add new nodes to the queue for a breadth-first search
+                if h not in nodes_seen and len(nodes_seen) < max_nodes:
+                    queue.append((h, current_depth + 1))
+                if t not in nodes_seen and len(nodes_seen) < max_nodes:
+                    queue.append((t, current_depth + 1))
+        except peewee.DoesNotExist:
+            continue
+        
+    return list(triples)
+
 def build_merged_kg(concept_triples, atomic_triples):
     """
     Combines ConceptNet and ATOMIC triples into a single NetworkX DiGraph.
@@ -142,7 +187,7 @@ def convert_nx_to_pyg_or_fallback(nx_graph, query_embedding, context_embedding, 
     """
     Converts a NetworkX graph to a PyTorch Geometric data object.
     
-    This function uses a helper function from `reasoning.graph_builder` but includes
+    This function uses a helper function from reasoning.graph_builder but includes
     a fallback mechanism in case that import fails, ensuring the script can still run.
     
     Args:
@@ -177,7 +222,7 @@ def convert_nx_to_pyg_or_fallback(nx_graph, query_embedding, context_embedding, 
         
         # Create a feature vector for each node by combining query and context embeddings
         node_feat = torch.zeros((n, feature_dim), dtype=torch.float)
-        # Note: This is a simple fallback. The actual `nx_to_pyg_data` might be more sophisticated.
+        # Note: This is a simple fallback. The actual nx_to_pyg_data might be more sophisticated.
         for i in range(n):
             node_feat[i, :q_vec.shape[0]] = q_vec
             node_feat[i, q_vec.shape[0]:q_vec.shape[0]+c_vec.shape[0]] = c_vec
@@ -256,22 +301,11 @@ def adjust_label_for_context(label_tuple, mood, time_of_day, weather):
         e = min(1.0, e + 0.05)
     return (u, e, p, emp)
 
-def generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_samples=100, max_nodes=20):
+def generate_mock_data(atomic_triples, transformer_encoder, context_encoder, num_samples=100, max_nodes=20):
     """
     Generates a mock dataset of PyTorch Geometric graphs for training.
     
-    For each sample, it picks a query, fetches a subgraph from the merged KG,
-    encodes the query and context, and creates a PyG data object with labels.
-    
-    Args:
-        merged_graph (nx.DiGraph): The combined ConceptNet and ATOMIC graph.
-        transformer_encoder (TransformerEncoder): Encoder for the query text.
-        context_encoder (ContextEncoder): Encoder for the context.
-        num_samples (int): The number of samples to generate.
-        max_nodes (int): The maximum number of nodes in each subgraph.
-    
-    Returns:
-        list: A list of PyTorch Geometric Data objects.
+    This version dynamically queries ConceptNet for each sample.
     """
     dataset = []
     skipped = 0
@@ -280,17 +314,20 @@ def generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_s
         mood = random.choice(list(context_encoder.mood_map.keys()))
         time_of_day = random.choice(list(context_encoder.time_of_day_map.keys()))
         weather = random.choice(list(context_encoder.weather_condition_map.keys()))
-        seed = next((w for w in query_text.split() if len(w) > 2), query_text).lower()
         
-        # Build the subgraph for the query
-        if merged_graph is not None:
-            nx_sub = fetch_combined_relations(merged_graph, seed, depth=1, max_nodes=max_nodes, max_edges=200)
-        elif fetch_conceptnet_relations is not None:
-            nx_sub = fetch_conceptnet_relations(seed, depth=1, max_nodes=max_nodes, max_edges=200)
-        else:
-            nx_sub = nx.DiGraph()
+        # Get a seed term for graph building
+        seed = next((w for w in query_text.lower().split() if len(w) > 2), None)
+        if not seed:
+            skipped += 1
+            continue
+
+        # Dynamically fetch ConceptNet triples
+        concept_triples = fetch_conceptnet_relations_db(seed, depth=1, max_nodes=max_nodes, max_edges=200)
+
+        # Merge the small, dynamic ConceptNet graph with ATOMIC triples
+        merged_graph, _, _ = build_merged_kg(concept_triples, atomic_triples)
             
-        if not nx_sub or nx_sub.number_of_nodes() == 0:
+        if not merged_graph or merged_graph.number_of_nodes() == 0:
             skipped += 1
             continue
             
@@ -299,7 +336,7 @@ def generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_s
         c_emb = context_encoder.encode(mood, time_of_day, weather)
         
         # Convert to PyTorch Geometric format
-        pyg, mapping = convert_nx_to_pyg_or_fallback(nx_sub, q_emb, c_emb, TOTAL_INPUT_DIM)
+        pyg, mapping = convert_nx_to_pyg_or_fallback(merged_graph, q_emb, c_emb, TOTAL_INPUT_DIM)
         if pyg is None or getattr(pyg, 'x', None) is None or pyg.x.numel() == 0:
             skipped += 1
             continue
@@ -315,10 +352,7 @@ def generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_s
 # ---------- main ----------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a GAT model for persona inference.")
-    parser.add_argument("--conceptnet", type=str, default="data/conceptnet/conceptnet-assertions-5.7.0.csv.gz", help="Path to the ConceptNet file.")
     parser.add_argument("--atomic", type=str, default="data/atomic2020/v4_atomic_trn.csv", help="Path to the ATOMIC file.")
-    parser.add_argument("--max-conceptnet", type=int, default=DEFAULT_MAX_CONCEPTNET, help="Max triples from ConceptNet.")
-    parser.add_argument("--max-atomic", type=int, default=DEFAULT_MAX_ATOMIC, help="Max triples from ATOMIC.")
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS, help="Number of training epochs.")
     parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH, help="Batch size for training.")
     parser.add_argument("--debug", action="store_true", help="Run a short, small run for debug.")
@@ -328,44 +362,23 @@ if __name__ == "__main__":
     if args.debug:
         print("[train] DEBUG mode: using tiny sizes")
         args.epochs = max(1, min(3, args.epochs))
-        args.max_conceptnet = min(5000, args.max_conceptnet)
-        args.max_atomic = min(2000, args.max_atomic)
 
-    # load triples
-    concept_triples = []
+    # Load ATOMIC triples only once at the beginning
     atomic_triples = []
-    if os.path.exists(args.conceptnet):
-        concept_triples = load_conceptnet(args.conceptnet, max_triples=args.max_conceptnet)
-    else:
-        print(f"[train] ConceptNet file not found at {args.conceptnet}. Will try live API fallback.")
-
     if os.path.exists(args.atomic):
-        atomic_triples = load_atomic_tsv(args.atomic, max_triples=args.max_atomic)
+        atomic_triples = load_atomic_tsv(args.atomic, max_triples=DEFAULT_MAX_ATOMIC)
     else:
         print(f"[train] ATOMIC file not found at {args.atomic}. Continuing without ATOMIC.")
-
-    merged_graph = None
-    node2id = {}
-    rel2id = {}
-    if concept_triples or atomic_triples:
-        merged_graph, node2id, rel2id = build_merged_kg(concept_triples, atomic_triples)
-        os.makedirs("data/kg_mappings", exist_ok=True)
-        with open("data/kg_mappings/node2id.json", "w", encoding="utf-8") as fh:
-            json.dump(node2id, fh)
-        with open("data/kg_mappings/rel2id.json", "w", encoding="utf-8") as fh:
-            json.dump(rel2id, fh)
-        print("[train] Saved node/rel mappings to data/kg_mappings/")
-
-    # encoders
-    transformer_encoder = TransformerEncoder()  # will fallback to deterministic embedding if model not available
+        
+    # Encoders
+    transformer_encoder = TransformerEncoder()
     context_encoder = ContextEncoder()
-
     TRANSFORMER_EMBEDDING_DIM = transformer_encoder.embedding_dim if hasattr(transformer_encoder, 'embedding_dim') and transformer_encoder.embedding_dim > 0 else DEFAULT_TRANSFORMER_EMBED_DIM
     CONTEXT_DIM = context_encoder.total_context_dim
     TOTAL_INPUT_DIM = TRANSFORMER_EMBEDDING_DIM + CONTEXT_DIM + BASE_NODE_FEATURE_DIM
     print(f"[train] TOTAL_INPUT_DIM={TOTAL_INPUT_DIM}")
 
-    # model init
+    # Model init
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = GATModel(input_dim=TOTAL_INPUT_DIM, hidden_dim=HIDDEN_DIM, output_dim=OUTPUT_DIM).to(device)
     optimizer = optim.Adam(model.parameters(), lr=DEFAULT_LR)
@@ -374,17 +387,21 @@ if __name__ == "__main__":
     best_val = float('inf')
     for epoch in range(1, args.epochs + 1):
         print(f"[train] Epoch {epoch}/{args.epochs}")
-        dataset = generate_mock_data(merged_graph, transformer_encoder, context_encoder, num_samples=50 if args.debug else 200, max_nodes=20)
+        # Pass atomic triples to the data generation function
+        dataset = generate_mock_data(atomic_triples, transformer_encoder, context_encoder, num_samples=50 if args.debug else 200, max_nodes=20)
+        
         if not dataset:
             print("[train] No data generated; exit.")
             break
-        # small split
+        
+        # Small split
         random.shuffle(dataset)
         val_split = max(1, int(0.1 * len(dataset)))
         val_set = dataset[:val_split]
         train_set = dataset[val_split:]
         train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
         
+        # Training loop
         model.train()
         epoch_loss = 0.0
         for batch in tqdm(train_loader, desc="batches"):
@@ -392,12 +409,10 @@ if __name__ == "__main__":
             optimizer.zero_grad()
             out = model(batch)
             pred = torch.sigmoid(out)
-            # out shape: (batch_size, OUTPUT_DIM)
             bs = pred.shape[0]
             try:
                 target = batch.y.view(bs, OUTPUT_DIM).to(device)
             except Exception as e:
-                print(f"[train] shape error: {e}")
                 continue
             loss = criterion(pred, target)
             loss.backward()
@@ -405,7 +420,7 @@ if __name__ == "__main__":
             epoch_loss += loss.item()
         avg_train_loss = epoch_loss / max(1, len(train_loader))
         
-        # validation
+        # Validation
         model.eval()
         val_loss = 0.0
         if val_set:
@@ -424,7 +439,7 @@ if __name__ == "__main__":
             val_loss = val_loss / max(1, len(val_loader))
         print(f"[train] epoch_loss={avg_train_loss:.4f}, val_loss={val_loss:.4f}")
         
-        # checkpoint
+        # Checkpoint
         os.makedirs("models", exist_ok=True)
         ckpt_path = f"models/persona_gat_epoch{epoch}.pth"
         torch.save({
