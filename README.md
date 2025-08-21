@@ -45,10 +45,11 @@ python train_gat.py   --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.c
 ```
 
 Arguments:
-- `--conceptnet` → Path to ConceptNet CSV file  
-- `--atomic` → Path to ATOMIC dataset  
-- `--epochs` → Number of training epochs  
-- `--batch-size` → Training batch size  
+
+- `--conceptnet` → Path to ConceptNet CSV file
+- `--atomic` → Path to ATOMIC dataset
+- `--epochs` → Number of training epochs
+- `--batch-size` → Training batch size
 
 ---
 
@@ -57,10 +58,11 @@ Arguments:
 The `eval_gat.py` script evaluates the performance of the trained GAT model. It loads a checkpoint, prepares evaluation data, runs inference, and computes metrics.
 
 Key Functions:
-- **Model Loading** → Loads a pre-trained checkpoint (`.pth`)  
-- **Data Preparation** → Prepares subgraphs + ground-truth persona labels  
-- **Inference** → Runs predictions on evaluation data  
-- **Metrics** → Accuracy, Precision, Recall, F1-score  
+
+- **Model Loading** → Loads a pre-trained checkpoint (`.pth`)
+- **Data Preparation** → Prepares subgraphs + ground-truth persona labels
+- **Inference** → Runs predictions on evaluation data
+- **Metrics** → Accuracy, Precision, Recall, F1-score
 
 Run evaluation with:
 
@@ -75,9 +77,10 @@ python -m tools.eval_gat   --atomic data/atomic2020/train.csv   --checkpoint mod
 The `inspect_checkpoint.py` script helps debug and verify PyTorch model checkpoint files (`.pth`) without needing the full model architecture.
 
 Key Features:
-- Displays **top-level keys** (`model_state_dict`, `epoch`, `optimizer_state_dict`, etc.)  
-- Lists **parameter names + tensor shapes**  
-- Shows **metadata** (`input_dim`, `hidden_dim`, `output_dim`)  
+
+- Displays **top-level keys** (`model_state_dict`, `epoch`, `optimizer_state_dict`, etc.)
+- Lists **parameter names + tensor shapes**
+- Shows **metadata** (`input_dim`, `hidden_dim`, `output_dim`)
 
 Usage:
 
@@ -98,8 +101,9 @@ streamlit run app.py --server.runOnSave false
 ```
 
 Access in your browser:
-- Local: [http://localhost:8501](http://localhost:8501)  
-- Network: `http://<your-ip>:8501`  
+
+- Local: [http://localhost:8501](http://localhost:8501)
+- Network: `http://<your-ip>:8501`
 
 ---
 
@@ -107,31 +111,98 @@ Access in your browser:
 
 ```
 DynCogNLI/
-│── app.py                     # Streamlit interface
-│── train_gat.py               # Main training script
-│── tools/
-│   ├── eval_gat.py            # Evaluate trained model
-│   ├── inspect_checkpoint.py  # Inspect model checkpoints
-│── models/                    # Saved models (.pth)
-│── data/                      # ConceptNet and ATOMIC datasets
-│── requirements.txt           # Project dependencies
-└── README.md                  # Project documentation
+├── README.md                  # Project documentation
+├── requirements.txt           # Project dependencies
+├── config.json                # Configuration file
+├── app.py                     # Streamlit interface
+├── train_gat.py               # GAT model training script
+├── train_baseline.py          # Baseline model training script
+├── run_inference.py           # Inference pipeline
+├── context/                   # Context management and encoders
+│   ├── context_encoder.py
+│   ├── context_manager.py
+│   ├── real_time_updater.py
+│   ├── response_generator.py
+│   └── transformer_encoder.py
+│
+├── data/                      # Datasets
+│   ├── atomic2020/
+│   │   └── train.csv
+│   ├── conceptnet/
+│   │   ├── conceptnet-assertions-5.6.0.csv
+│   │   └── conceptnet.db
+│   └── kg_mappings/
+│       ├── node2id.json
+│       └── rel2id.json
+│
+├── evaluation/                # Evaluation scripts & results
+│   ├── evaluation_data.json
+│   ├── evaluation_results.json
+│   ├── evaluator.py
+│   └── get_evaluation_stats.py
+│
+├── explanation_images/         # Supporting images for documentation
+│
+├── knowledge/                 # Knowledge graph utilities
+│   ├── common_sense_client.py
+│   ├── graph_builder.py
+│   ├── graph_visualizer.py
+│   ├── interactive_visualizer.py
+│   ├── retriever.py
+│   └── visualizer.py
+│
+├── llm/                       # Large language model interface
+│   └── llm_responder.py
+│
+├── models/                    # Saved models and checkpoints
+│   └── persona_gat_model.pth
+│
+├── preprocessing/             # Dataset loaders
+│   ├── atomic_loader.py
+│   └── conceptnet_loader.py
+│
+├── reasoning/                 # GNN reasoning modules
+│   ├── gat_model.py
+│   ├── graph_builder.py
+│   ├── multi_hop_reasoner.py
+│   └── simple_model.py
+│
+├── response/                  # Response generators
+│   └── recommender.py
+│
+├── scripts/                   # Utility run scripts
+│   ├── run_streamlit.bat
+│   ├── run_streamlit.ps1
+│   └── run_streamlit.sh
+│
+├── tools/                     # Analysis and evaluation tools
+│   ├── app copy.py
+│   ├── eval_gat.py
+│   └── inspect_checkpoint.py
+│
+├── utils/                     # Helper utilities
+│   └── graph_utils.py
+│
+└── visualization/             # Graph visualization tools
+    └── graph_plotter.py
+
 ```
 
 ---
 
 ## 📜 Available Scripts
 
-- `train_gat.py` → Train the GAT model  
-- `tools/eval_gat.py` → Evaluate the trained model  
-- `tools/inspect_checkpoint.py` → Inspect checkpoint contents  
-- `app.py` → Run Streamlit interface  
+- `train_gat.py` → Train the GAT model
+- `tools/eval_gat.py` → Evaluate the trained model
+- `tools/inspect_checkpoint.py` → Inspect checkpoint contents
+- `app.py` → Run Streamlit interface
 
 ---
 
 ## ⚡ Example Workflow
 
 1. **Setup environment**
+
    ```bash
    python -m venv .venv
    .venv\Scripts\activate
@@ -139,16 +210,19 @@ DynCogNLI/
    ```
 
 2. **Train the model**
+
    ```bash
    python train_gat.py --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv --atomic data/atomic2020/train.csv --epochs 10 --batch-size 8
    ```
 
 3. **Evaluate model performance**
+
    ```bash
    python -m tools.eval_gat --atomic data/atomic2020/train.csv --checkpoint models/persona_gat_model.pth --device cpu --terms laptop phone car "flight delay"
    ```
 
 4. **Inspect a checkpoint**
+
    ```bash
    python tools/inspect_checkpoint.py models/persona_gat_model.pth
    ```
