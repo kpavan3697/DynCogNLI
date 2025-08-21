@@ -34,12 +34,6 @@ Install required libraries:
 pip install -r requirements.txt
 ```
 
-👉 If `requirements.txt` is missing, regenerate it with:
-
-```bash
-pip freeze > requirements.txt
-```
-
 ---
 
 ## 🏋️ Training the Model
