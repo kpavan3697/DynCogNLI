@@ -107,15 +107,86 @@ Access in your browser:
 
 ```
 DynCogNLI/
-│── app.py                     # Streamlit interface
-│── train_gat.py               # Main training script
-│── tools/
-│   ├── eval_gat.py            # Evaluate trained model
-│   ├── inspect_checkpoint.py  # Inspect model checkpoints
-│── models/                    # Saved models (.pth)
-│── data/                      # ConceptNet and ATOMIC datasets
-│── requirements.txt           # Project dependencies
-└── README.md                  # Project documentation
+├── README.md                  # Project documentation
+├── requirements.txt           # Project dependencies
+├── config.json                # Configuration file
+├── app.py                     # Streamlit interface
+├── train_gat.py               # GAT model training script
+├── train_baseline.py          # Baseline model training script
+├── run_inference.py           # Inference pipeline
+├── test.py                    # Test runner / utility
+├── TrainingResult.png         # Training results visualization
+├── mock_graph.png             # Example graph visualization
+│
+├── context/                   # Context management and encoders
+│   ├── context_encoder.py
+│   ├── context_manager.py
+│   ├── proj_structure.py
+│   ├── real_time_updater.py
+│   ├── response_generator.py
+│   └── transformer_encoder.py
+│
+├── data/                      # Datasets
+│   ├── atomic2020/
+│   │   └── train.csv
+│   ├── conceptnet/
+│   │   ├── conceptnet-assertions-5.6.0.csv
+│   │   └── conceptnet.db
+│   └── kg_mappings/
+│       ├── node2id.json
+│       └── rel2id.json
+│
+├── evaluation/                # Evaluation scripts & results
+│   ├── evaluation_data.json
+│   ├── evaluation_results.json
+│   ├── evaluator.py
+│   └── get_evaluation_stats.py
+│
+├── explanation_images/         # Supporting images for documentation
+│
+├── knowledge/                 # Knowledge graph utilities
+│   ├── common_sense_client.py
+│   ├── graph_builder.py
+│   ├── graph_visualizer.py
+│   ├── interactive_visualizer.py
+│   ├── retriever.py
+│   └── visualizer.py
+│
+├── llm/                       # Large language model interface
+│   └── llm_responder.py
+│
+├── models/                    # Saved models and checkpoints
+│   └── persona_gat_model.pth
+│
+├── preprocessing/             # Dataset loaders
+│   ├── atomic_loader.py
+│   └── conceptnet_loader.py
+│
+├── reasoning/                 # GNN reasoning modules
+│   ├── gat_model.py
+│   ├── graph_builder.py
+│   ├── multi_hop_reasoner.py
+│   └── simple_model.py
+│
+├── response/                  # Response generators
+│   └── recommender.py
+│
+├── scripts/                   # Utility run scripts
+│   ├── run_streamlit.bat
+│   ├── run_streamlit.ps1
+│   └── run_streamlit.sh
+│
+├── tools/                     # Analysis and evaluation tools
+│   ├── app copy.py
+│   ├── eval_gat.py
+│   └── inspect_checkpoint.py
+│
+├── utils/                     # Helper utilities
+│   └── graph_utils.py
+│
+└── visualization/             # Graph visualization tools
+    └── graph_plotter.py
+
 ```
 
 ---
