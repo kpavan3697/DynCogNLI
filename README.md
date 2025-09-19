@@ -41,15 +41,21 @@ pip install -r requirements.txt
 To train the Graph Attention Network (GAT) with ConceptNet and ATOMIC datasets:
 
 ```bash
-python train_gat.py   --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv   --atomic data/atomic2020/train.csv   --epochs 10   --batch-size 8
+python train_gat.py --atomic data/atomic2020/train.csv --batch-size 32
 ```
 
 Arguments:
 
-- `--conceptnet` → Path to ConceptNet CSV file
 - `--atomic` → Path to ATOMIC dataset
-- `--epochs` → Number of training epochs
 - `--batch-size` → Training batch size
+
+---
+
+To train the baseline model with ConceptNet and ATOMIC datasets:
+
+```bash
+python train_baseline.py
+```
 
 ---
 
@@ -67,7 +73,7 @@ Key Functions:
 Run evaluation with:
 
 ```bash
-python -m tools.eval_gat   --atomic data/atomic2020/train.csv   --checkpoint models/persona_gat_model.pth   --device cpu   --terms laptop phone car "flight delay"
+python -m tools.eval_gat --atomic data/atomic2020/train.csv --checkpoint models/persona_gat_model.pth --device cpu --terms [TERM1] [TERM2] "[MULTI-WORD TERM]"
 ```
 
 ---
@@ -134,7 +140,6 @@ DynCogNLI/
 │   ├── atomic2020/
 │   │   └── train.csv
 │   ├── conceptnet/
-│   │   ├── conceptnet-assertions-5.6.0.csv
 │   │   └── conceptnet.db
 │   └── kg_mappings/
 │       ├── node2id.json
@@ -217,13 +222,13 @@ DynCogNLI/
 2. **Train the model**
 
    ```bash
-   python train_gat.py --conceptnet data/conceptnet/conceptnet-assertions-5.6.0.csv --atomic data/atomic2020/train.csv --epochs 10 --batch-size 8
+   python train_gat.py --atomic data/atomic2020/train.csv --epochs 10 --batch-size 8
    ```
 
 3. **Evaluate model performance**
 
    ```bash
-   python -m tools.eval_gat --atomic data/atomic2020/train.csv --checkpoint models/persona_gat_model.pth --device cpu --terms laptop phone car "flight delay"
+   python -m tools.eval_gat --atomic data/atomic2020/train.csv --checkpoint models/persona_gat_model.pth --device cpu --terms [TERM1] [TERM2] "[MULTI-WORD TERM]"
    ```
 
 4. **Inspect a checkpoint**

@@ -217,7 +217,7 @@ with st.container():
         # Use a more dynamic height for the text area
         user_query = st.text_area(
             "Describe the situation or problem here:",
-            "My laptop screen cracked.",
+            "",
             height=150,
             key="user_query_input"
         )
@@ -415,7 +415,7 @@ if 'last_result' in st.session_state:
             st.info("No knowledge graph generated or found for visualization.")
 
 # --- Sidebar: Query History ---
-st.sidebar.header("🕒 Query History")
+st.sidebar.header(" Query History")
 if not st.session_state['query_history']:
     st.sidebar.write("No queries analyzed yet.")
 else:
@@ -423,7 +423,7 @@ else:
         st.sidebar.markdown(f"**Query:** {entry['query']}")
         st.sidebar.markdown(f"**Model:** {entry['model_type']}")
         if entry.get('ignored'):
-            st.sidebar.markdown(f"<span style='color:red;'>⚠️ Context Ignored</span>", unsafe_allow_html=True)
+            st.sidebar.markdown(f"<span style='color:red;'> Context Ignored</span>", unsafe_allow_html=True)
         else:
             context_str = f"Mood: {entry['mood']}, Time: {entry['time']}, Weather: {entry['weather']}"
             st.sidebar.markdown(context_str)

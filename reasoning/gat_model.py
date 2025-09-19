@@ -22,7 +22,7 @@ class GATModel(nn.Module):
     neighboring nodes, which is particularly effective for tasks that require
     understanding relationships within a graph, such as persona inference.
     """
-    def __init__(self, input_dim: int, hidden_dim: int, output_dim: int, heads: int = 1):
+    def __init__(self, input_dim: int, hidden_dim: int, output_dim: int, heads: int = 4):
         """
         Initializes the GATModel with configurable layer dimensions.
 

@@ -16,3 +16,4 @@ torch_geometric==2.6.1
 tqdm==4.67.1
 transformers==4.53.3
 urllib3==2.5.0
+scikit-learn==3.6.0

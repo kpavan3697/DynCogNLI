@@ -21,10 +21,6 @@ import torch.optim as optim
 from torch_geometric.data import DataLoader
 import networkx as nx
 
-# --- New Imports for Statistics ---
-import numpy as np
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-
 import peewee # For handling database exceptions
 
 # --- ConceptNet Lite Integration for efficient data access ---
@@ -56,9 +52,9 @@ except Exception:
 
 # ---------- default config ----------
 DEFAULT_MAX_ATOMIC = 50000
-DEFAULT_BATCH = 32
+DEFAULT_BATCH = 8
 DEFAULT_LR = 1e-3
-HIDDEN_DIM = 128
+HIDDEN_DIM = 64
 OUTPUT_DIM = 4
 BASE_NODE_FEATURE_DIM = 16  # small base features
 DEFAULT_TRANSFORMER_EMBED_DIM = 384
@@ -353,65 +349,11 @@ def generate_mock_data(atomic_triples, transformer_encoder, context_encoder, num
     print(f"[train] Generated {len(dataset)} samples. Skipped {skipped}.")
     return dataset
 
-# --- Evaluation Function ---
-def evaluate_and_print_metrics(model, dataloader, criterion, device):
-    """
-    Evaluates the model on a given dataset and prints performance metrics.
-    
-    Args:
-        model (nn.Module): The GAT model.
-        dataloader (DataLoader): The data loader for the validation set.
-        criterion (nn.Module): The loss function (e.g., MSELoss).
-        device (torch.device): The device to run evaluation on.
-        
-    Returns:
-        float: The average validation loss.
-        float: The average R-squared.
-        float: The average Mean Absolute Error (MAE).
-        float: The average Root Mean Squared Error (RMSE).
-    """
-    model.eval()
-    all_preds = []
-    all_targets = []
-    total_loss = 0.0
+# ---------- main ----------
+# ... (rest of the code)
 
-    with torch.no_grad():
-        for batch in dataloader:
-            batch = batch.to(device)
-            out = model(batch)
-            pred = torch.sigmoid(out)
-            bs = pred.shape[0]
-            try:
-                target = batch.y.view(bs, -1).to(device)
-            except Exception:
-                continue
-
-            loss = criterion(pred, target)
-            total_loss += loss.item()
-            
-            all_preds.append(pred.cpu().numpy())
-            all_targets.append(target.cpu().numpy())
-
-    # Concatenate all predictions and targets
-    preds_np = np.concatenate(all_preds, axis=0)
-    targets_np = np.concatenate(all_targets, axis=0)
-
-    # Calculate metrics for each dimension
-    r2_all_dims = [r2_score(targets_np[:, i], preds_np[:, i]) for i in range(targets_np.shape[1])]
-    mae_all_dims = [mean_absolute_error(targets_np[:, i], preds_np[:, i]) for i in range(targets_np.shape[1])]
-    mse_all_dims = [mean_squared_error(targets_np[:, i], preds_np[:, i]) for i in range(targets_np.shape[1])]
-    
-    # Calculate averages
-    avg_r2 = np.mean(r2_all_dims)
-    avg_mae = np.mean(mae_all_dims)
-    avg_mse = np.mean(mse_all_dims)
-    
-    # RMSE is the square root of MSE
-    avg_rmse = np.sqrt(avg_mse)
-
-    avg_loss = total_loss / max(1, len(dataloader))
-
-    return avg_loss, avg_r2, avg_mae, avg_rmse
+# --- main ---
+# ... (rest of the code)
 
 # ---------- main ----------
 if __name__ == "__main__":
@@ -556,30 +498,11 @@ if __name__ == "__main__":
     os.makedirs("models", exist_ok=True)
     best_path = args.save_path
     torch.save({
-        "model_state_dict": early_stopping.best_model_state,
+        "model_state_dict": model.state_dict(),
         "input_dim": TOTAL_INPUT_DIM,
         "hidden_dim": HIDDEN_DIM,
         "output_dim": OUTPUT_DIM,
         "epoch": epoch
     }, best_path)
     print(f"[train] saved final best model to {best_path}")
-
-    # --- Performance report ---
-    if val_set:
-        print("\n--------------------------------------")
-        print(" **Final Model Performance** ")
-        print(f"Epochs trained: {epoch}")
-        
-        # Create a DataLoader for the final evaluation
-        val_loader = DataLoader(val_set, batch_size=args.batch_size, shuffle=False)
-        
-        # Evaluate the best model from training
-        final_val_loss, final_r2, final_mae, final_rmse = evaluate_and_print_metrics(model, val_loader, criterion, device)
-        
-        print(f"Best validation loss achieved: {early_stopping.best_loss:.4f}")
-        print(f"Final validation loss (MSE): {final_val_loss:.4f}")
-        print(f"Average R-squared ($R^2$): {final_r2:.4f}")
-        print(f"Average Mean Absolute Error (MAE): {final_mae:.4f}")
-        print(f"Average Root Mean Squared Error (RMSE): {final_rmse:.4f}")
-        print("--------------------------------------")
-        print("[train] training complete")
+    print("[train] training complete")

@@ -8,8 +8,6 @@ direct performance comparison to demonstrate the value of the GNN's approach.
 """
 import os
 import sys
-import json
-import random
 import argparse
 from tqdm import tqdm
 
@@ -18,6 +16,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
 
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
 # Ensure the parent directory is in sys.path for local imports
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.join(__file__, '..'))))
 
@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.join(__file__, '..'))
 from reasoning.simple_model import SimpleModel
 from context.transformer_encoder import TransformerEncoder
 from context.context_encoder import ContextEncoder
-from data.mock_data_generator import generate_persona_data
+from preprocessing.mock_data_generator import generate_persona_data
 
 # --- Default Config ---
 DEFAULT_EPOCHS = 3
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     TRANSFORMER_EMBEDDING_DIM = transformer_encoder.embedding_dim if hasattr(transformer_encoder, 'embedding_dim') else 384
     CONTEXT_DIM = context_encoder.total_context_dim
     TOTAL_INPUT_DIM = TRANSFORMER_EMBEDDING_DIM + CONTEXT_DIM
-    print(f"✅ Baseline model input dimension: {TOTAL_INPUT_DIM}")
+    print(f" Baseline model input dimension: {TOTAL_INPUT_DIM}")
     
     # Initialize model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -92,6 +92,22 @@ if __name__ == "__main__":
         avg_loss = epoch_loss / len(dataloader)
         print(f"Epoch {epoch+1} Loss: {avg_loss:.4f}")
 
+    # --- Evaluation ---
+    print("\n--- Evaluating Model ---")
+    model.eval()
+    with torch.no_grad():
+        predictions = model(inputs).cpu().numpy()
+        true_labels = labels.cpu().numpy()
+
+    mse = mean_squared_error(true_labels, predictions)
+    mae = mean_absolute_error(true_labels, predictions)
+    r2 = r2_score(true_labels, predictions)
+
+    print(f"\n Model Evaluation Metrics:")
+    print(f"   MSE: {mse:.4f}")
+    print(f"   MAE: {mae:.4f}")
+    print(f"   R² : {r2:.4f}")
+
     # After training, save the model
     os.makedirs("models", exist_ok=True)
     save_path = "models/baseline_ffn_model.pth"
@@ -102,5 +118,4 @@ if __name__ == "__main__":
         "output_dim": OUTPUT_DIM,
         "epochs": args.epochs
     }, save_path)
-    print(f"\n✅ Baseline FFN model saved to {save_path}")
-
+    print(f"\n Baseline FFN model saved to {save_path}")
