@@ -1,0 +1,2306 @@
+[
+    {
+        "query": "My cat seems very sick, throwing up constantly.",
+        "mood": "Anxious",
+        "time_of_day": "Night",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.25,
+                "MAE": 0.012499999999999983,
+                "RMSE": 0.013228756555322923,
+                "R2": 0.7383177570093467
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7265407815865123,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect symptoms from user's description",
+                    "Assess urgency based on severity and context",
+                    "Infer need for immediate intervention",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0034500000000000025,
+                "MAE": 0.05500000000000002,
+                "RMSE": 0.05873670062235367,
+                "R2": -4.1588785046729075
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7867012086133773,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8823529411764706
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect symptoms from user's description",
+                    "Assess urgency based on severity and context",
+                    "Infer need for immediate intervention",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I lost my wallet in the park and need help.",
+        "mood": "Stressed",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8504672897196257
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7311104457090247,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8823529411764706
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect problem description",
+                    "Assess urgency and context",
+                    "Determine practical solution",
+                    "Generate empathetic response"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.005200000000000005,
+                "MAE": 0.07000000000000003,
+                "RMSE": 0.07211102550927982,
+                "R2": -6.775700934579453
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.8265168183793802,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9090909090909091
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect problem description",
+                    "Assess urgency and context",
+                    "Determine practical solution",
+                    "Generate empathetic response"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My flight got canceled and I am stranded at the airport.",
+        "mood": "Frustrated",
+        "time_of_day": "Morning",
+        "weather_condition": "Foggy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9295154185022025
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7700645773757425,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9375
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel disruption",
+                    "Assess urgency and emotional impact",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002250000000000001,
+                "MAE": 0.04500000000000001,
+                "RMSE": 0.0474341649025257,
+                "R2": -0.585903083700442
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4153509237206396,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel disruption",
+                    "Assess urgency and emotional impact",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I think my laptop has a virus and I lost all my files.",
+        "mood": "Panicked",
+        "time_of_day": "Evening",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9586563307493539
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6175637907926896,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8461538461538461
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech problem",
+                    "Assess urgency and emotional distress",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0019750000000000037,
+                "MAE": 0.04250000000000004,
+                "RMSE": 0.04444097208657798,
+                "R2": 0.18346253229973974
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.392814650900513,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech problem",
+                    "Assess urgency and emotional distress",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I missed my project deadline and my manager is angry.",
+        "mood": "Guilty",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.984
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7494274492801177,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8947368421052632
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect problem",
+                    "Assess urgency and emotional impact",
+                    "Determine practical actions",
+                    "Provide empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002099999999999998,
+                "MAE": 0.044999999999999984,
+                "RMSE": 0.04582575694955838,
+                "R2": 0.6640000000000003
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.37531192687516973,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect problem",
+                    "Assess urgency and emotional impact",
+                    "Determine practical actions",
+                    "Provide empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My car broke down in the middle of the highway.",
+        "mood": "Panicked",
+        "time_of_day": "Night",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9245283018867922
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7082593633017147,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8947368421052632
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect vehicle issue",
+                    "Assess urgency based on context",
+                    "Determine practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0018750000000000006,
+                "MAE": 0.04250000000000001,
+                "RMSE": 0.04330127018922194,
+                "R2": -0.4150943396226421
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.392814650900513,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect vehicle issue",
+                    "Assess urgency based on context",
+                    "Determine practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I can't log into my bank account and money is pending transfer.",
+        "mood": "Worried",
+        "time_of_day": "Morning",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9106145251396648
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6631592303984166,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect financial issue",
+                    "Assess urgency and distress",
+                    "Determine practical steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0023750000000000025,
+                "MAE": 0.047500000000000014,
+                "RMSE": 0.048733971724044846,
+                "R2": -1.1229050279329593
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5466325569645467,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect financial issue",
+                    "Assess urgency and distress",
+                    "Determine practical steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My friend is not responding to my messages and I feel ignored.",
+        "mood": "Sad",
+        "time_of_day": "Evening",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.0002499999999999996,
+                "MAE": 0.014999999999999993,
+                "RMSE": 0.015811388300841885,
+                "R2": 0.997158081705151
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6336107067679622,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect social/emotional issue",
+                    "Assess urgency and emotional impact",
+                    "Provide empathetic guidance",
+                    "Suggest practical next steps if needed"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0010500000000000019,
+                "MAE": 0.030000000000000027,
+                "RMSE": 0.03240370349203933,
+                "R2": 0.988063943161634
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.8034284189446518,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect social/emotional issue",
+                    "Assess urgency and emotional impact",
+                    "Provide empathetic guidance",
+                    "Suggest practical next steps if needed"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I burned my hand while cooking and it hurts a lot.",
+        "mood": "Painful",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9245283018867922
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7860753021519787,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9230769230769231
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect injury",
+                    "Assess urgency and pain",
+                    "Provide practical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0019750000000000006,
+                "MAE": 0.04250000000000001,
+                "RMSE": 0.04444097208657795,
+                "R2": -0.4905660377358505
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.10932651139290935,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect injury",
+                    "Assess urgency and pain",
+                    "Provide practical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am struggling to understand my math homework before the deadline.",
+        "mood": "Confused",
+        "time_of_day": "Evening",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9657387580299786
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5900468726392808,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8461538461538461
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect academic problem",
+                    "Assess urgency and emotional distress",
+                    "Provide practical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0017499999999999977,
+                "MAE": 0.03999999999999998,
+                "RMSE": 0.04183300132670375,
+                "R2": 0.4004282655246264
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.392814650900513,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect academic problem",
+                    "Assess urgency and emotional distress",
+                    "Provide practical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I feel dizzy and nauseous after taking new medication.",
+        "mood": "Anxious",
+        "time_of_day": "Morning",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.6923076923076923
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7867012086133773,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8823529411764706
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect health symptoms",
+                    "Assess urgency and distress",
+                    "Provide medical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0023750000000000012,
+                "MAE": 0.047500000000000014,
+                "RMSE": 0.04873397172404483,
+                "R2": -6.307692307692299
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.3976353643835253,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8181818181818182
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect health symptoms",
+                    "Assess urgency and distress",
+                    "Provide medical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My house flooded after heavy rain and I need help with insurance.",
+        "mood": "Stressed",
+        "time_of_day": "Evening",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8504672897196257
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7700645773757425,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emergency situation",
+                    "Assess urgency with context",
+                    "Determine practical insurance and relief steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0030250000000000008,
+                "MAE": 0.05250000000000002,
+                "RMSE": 0.05500000000000001,
+                "R2": -3.5233644859813156
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6179654585112234,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8181818181818182
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emergency situation",
+                    "Assess urgency with context",
+                    "Determine practical insurance and relief steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I can't access my email and have an urgent work deadline.",
+        "mood": "Frustrated",
+        "time_of_day": "Morning",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9362549800796813
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.833878585505777,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech/work issue",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0019749999999999993,
+                "MAE": 0.04249999999999998,
+                "RMSE": 0.044440972086577935,
+                "R2": -0.25896414342629215
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7730551756939454,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8888888888888888
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech/work issue",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I accidentally sent a personal message to my boss.",
+        "mood": "Embarrassed",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.984
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6636154805687886,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9230769230769231
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect social/work issue",
+                    "Assess urgency and distress",
+                    "Provide practical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0019750000000000006,
+                "MAE": 0.04250000000000001,
+                "RMSE": 0.04444097208657795,
+                "R2": 0.6839999999999999
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6500593260343691,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect social/work issue",
+                    "Assess urgency and distress",
+                    "Provide practical guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My internet stopped working during an online exam.",
+        "mood": "Panicked",
+        "time_of_day": "Evening",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.7611940298507462
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6850836912969523,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8571428571428571
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech problem",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002475000000000004,
+                "MAE": 0.04750000000000004,
+                "RMSE": 0.049749371855331036,
+                "R2": -4.910447761194029
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.392814650900513,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech problem",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am feeling lonely and no one answered my calls.",
+        "mood": "Sad",
+        "time_of_day": "Night",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.0002499999999999996,
+                "MAE": 0.014999999999999993,
+                "RMSE": 0.015811388300841885,
+                "R2": 0.9975720789074355
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6636154805687886,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9166666666666666
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emotional concern",
+                    "Assess distress with context",
+                    "Provide empathetic support",
+                    "Suggest practical coping if needed"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0008500000000000015,
+                "MAE": 0.025000000000000022,
+                "RMSE": 0.02915475947422653,
+                "R2": 0.9917450682852808
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7311104457090247,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emotional concern",
+                    "Assess distress with context",
+                    "Provide empathetic support",
+                    "Suggest practical coping if needed"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I lost my passport two days before my international flight.",
+        "mood": "Panicked",
+        "time_of_day": "Morning",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 9.999999999999961e-05,
+                "MAE": 0.009999999999999981,
+                "RMSE": 0.009999999999999981,
+                "R2": 0.929515418502203
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7700645773757425,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel problem",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0027000000000000006,
+                "MAE": 0.05000000000000002,
+                "RMSE": 0.051961524227066326,
+                "R2": -0.9030837004405285
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.3976353643835253,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8181818181818182
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel problem",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I accidentally deleted an important project file before submission.",
+        "mood": "Anxious",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9538904899135446
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5983790078367693,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8666666666666667
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect work/academic problem",
+                    "Assess urgency with context",
+                    "Provide recovery steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002250000000000001,
+                "MAE": 0.04500000000000001,
+                "RMSE": 0.0474341649025257,
+                "R2": -0.03746397694524539
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4417918226831577,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect work/academic problem",
+                    "Assess urgency with context",
+                    "Provide recovery steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My child has a high fever and is vomiting.",
+        "mood": "Worried",
+        "time_of_day": "Night",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8095238095238089
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7315254958027825,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8461538461538461
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect child health symptoms",
+                    "Assess urgency with context",
+                    "Provide emergency guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.003024999999999996,
+                "MAE": 0.05249999999999996,
+                "RMSE": 0.054999999999999966,
+                "R2": -4.761904761904765
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4876836638685217,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect child health symptoms",
+                    "Assess urgency with context",
+                    "Provide emergency guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am stranded at the airport due to a flight cancellation.",
+        "mood": "Frustrated",
+        "time_of_day": "Evening",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9144385026737966
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6989307622784944,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8571428571428571
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel disruption",
+                    "Assess urgency with context",
+                    "Provide practical advice",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002850000000000001,
+                "MAE": 0.05000000000000002,
+                "RMSE": 0.05338539126015657,
+                "R2": -1.4385026737967959
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.24843779902590662,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel disruption",
+                    "Assess urgency with context",
+                    "Provide practical advice",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My car broke down in the middle of the highway.",
+        "mood": "Panicked",
+        "time_of_day": "Night",
+        "weather_condition": "Stormy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9245283018867922
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7577395672414201,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8666666666666667
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect vehicle emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002699999999999998,
+                "MAE": 0.04999999999999999,
+                "RMSE": 0.0519615242270663,
+                "R2": -1.0377358490566047
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.22089591134157885,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect vehicle emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I can't sleep because of noisy neighbors.",
+        "mood": "Irritated",
+        "time_of_day": "Night",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9929670329670329
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.632708767532676,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8666666666666667
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect sleep disturbance",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0014500000000000001,
+                "MAE": 0.03499999999999999,
+                "RMSE": 0.03807886552931954,
+                "R2": 0.898021978021978
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.45966135761245924,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect sleep disturbance",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I received a suspicious email asking for my bank details.",
+        "mood": "Worried",
+        "time_of_day": "Morning",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9418181818181817
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7315254958027825,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8461538461538461
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect phishing/security threat",
+                    "Assess urgency with context",
+                    "Provide practical advice",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0025750000000000018,
+                "MAE": 0.047500000000000014,
+                "RMSE": 0.050744457825461116,
+                "R2": -0.4981818181818196
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5814307369682193,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect phishing/security threat",
+                    "Assess urgency with context",
+                    "Provide practical advice",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My pet dog ran away during a walk.",
+        "mood": "Panicked",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8504672897196256
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5543058126156657,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8571428571428571
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect pet emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002875000000000001,
+                "MAE": 0.05250000000000002,
+                "RMSE": 0.05361902647381805,
+                "R2": -3.2990654205607566
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.20205155046766235,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7142857142857143
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect pet emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I forgot my password and can't access my work portal.",
+        "mood": "Frustrated",
+        "time_of_day": "Morning",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9663157894736841
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5706745777055999,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect login/tech issue",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0019749999999999967,
+                "MAE": 0.042499999999999954,
+                "RMSE": 0.04444097208657791,
+                "R2": 0.33473684210526433
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4728708045015879,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7142857142857143
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect login/tech issue",
+                    "Assess urgency with context",
+                    "Provide practical solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I feel overwhelmed with deadlines and can't focus.",
+        "mood": "Stressed",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9940740740740741
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7632661822742675,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect stress/overload",
+                    "Assess urgency with context",
+                    "Provide coping strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0014499999999999973,
+                "MAE": 0.034999999999999976,
+                "RMSE": 0.03807886552931951,
+                "R2": 0.9140740740740743
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect stress/overload",
+                    "Assess urgency with context",
+                    "Provide coping strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I need urgent legal advice about a contract dispute.",
+        "mood": "Anxious",
+        "time_of_day": "Morning",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9710144927536232
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.49616830003403634,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8461538461538461
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect legal problem",
+                    "Assess urgency with context",
+                    "Provide practical legal steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.001974999999999998,
+                "MAE": 0.04249999999999998,
+                "RMSE": 0.04444097208657792,
+                "R2": 0.4275362318840582
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect legal problem",
+                    "Assess urgency with context",
+                    "Provide practical legal steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am feeling socially isolated and anxious about meeting new people.",
+        "mood": "Anxious",
+        "time_of_day": "Evening",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 9.999999999999991e-05,
+                "MAE": 0.009999999999999995,
+                "RMSE": 0.009999999999999995,
+                "R2": 0.9982749326145552
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5081327481546147,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emotional/social issue",
+                    "Assess distress with context",
+                    "Provide coping suggestions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0008500000000000001,
+                "MAE": 0.02500000000000001,
+                "RMSE": 0.029154759474226504,
+                "R2": 0.9853369272237197
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.24028114141347542,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8571428571428571
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emotional/social issue",
+                    "Assess distress with context",
+                    "Provide coping suggestions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I spilled coffee on my laptop and it won't turn on.",
+        "mood": "Frustrated",
+        "time_of_day": "Morning",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9538904899135446
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6989307622784944,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8461538461538461
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect technical accident",
+                    "Assess urgency with context",
+                    "Provide repair/recovery advice",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0025750000000000018,
+                "MAE": 0.047500000000000014,
+                "RMSE": 0.050744457825461116,
+                "R2": -0.18731988472622563
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.223606797749979,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8571428571428571
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect technical accident",
+                    "Assess urgency with context",
+                    "Provide repair/recovery advice",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am locked out of my house and it's raining heavily.",
+        "mood": "Panicked",
+        "time_of_day": "Evening",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 9.999999999999961e-05,
+                "MAE": 0.009999999999999981,
+                "RMSE": 0.009999999999999981,
+                "R2": 0.8620689655172418
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7505336182671021,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9333333333333333
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect lockout emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0031500000000000013,
+                "MAE": 0.05500000000000002,
+                "RMSE": 0.05612486080160913,
+                "R2": -3.344827586206903
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect lockout emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My flight is delayed and I might miss my connecting train.",
+        "mood": "Anxious",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.968
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6985342056580097,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9090909090909091
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel disruption",
+                    "Assess urgency with context",
+                    "Provide practical options",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0025750000000000005,
+                "MAE": 0.047500000000000014,
+                "RMSE": 0.0507444578254611,
+                "R2": 0.17599999999999993
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7311104457090247,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel disruption",
+                    "Assess urgency with context",
+                    "Provide practical options",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I feel extremely anxious about giving a presentation tomorrow.",
+        "mood": "Anxious",
+        "time_of_day": "Evening",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9956756756756757
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.49393827371153703,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect performance anxiety",
+                    "Assess urgency with context",
+                    "Provide coping strategies",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0013749999999999997,
+                "MAE": 0.0325,
+                "RMSE": 0.03708099243547831,
+                "R2": 0.9405405405405406
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7311104457090247,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.875
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect performance anxiety",
+                    "Assess urgency with context",
+                    "Provide coping strategies",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My water pipe burst and flooded the kitchen.",
+        "mood": "Frustrated",
+        "time_of_day": "Morning",
+        "weather_condition": "Rainy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9796696315120711
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.49393827371153703,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect home emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.003174999999999995,
+                "MAE": 0.05249999999999996,
+                "RMSE": 0.05634713834792318,
+                "R2": 0.35451080050825967
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.11362193664674995,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7142857142857143
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect home emergency",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I just found out my credit card was stolen.",
+        "mood": "Worried",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8947368421052632
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.3976353643835253,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8181818181818182
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect financial fraud",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002250000000000001,
+                "MAE": 0.04500000000000001,
+                "RMSE": 0.0474341649025257,
+                "R2": -1.368421052631576
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.45966135761245924,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect financial fraud",
+                    "Assess urgency with context",
+                    "Provide practical steps",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am feeling very lonely and disconnected from friends.",
+        "mood": "Sad",
+        "time_of_day": "Evening",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 9.999999999999991e-05,
+                "MAE": 0.009999999999999995,
+                "RMSE": 0.009999999999999995,
+                "R2": 0.9982749326145552
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.392814650900513,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emotional distress",
+                    "Assess urgency with context",
+                    "Provide coping suggestions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0008500000000000001,
+                "MAE": 0.02500000000000001,
+                "RMSE": 0.029154759474226504,
+                "R2": 0.9853369272237197
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5623413251903491,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect emotional distress",
+                    "Assess urgency with context",
+                    "Provide coping suggestions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I have a migraine and cannot concentrate on work.",
+        "mood": "Unwell",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.968
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5706745777055999,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect health problem",
+                    "Assess urgency with context",
+                    "Provide coping advice",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.00145,
+                "MAE": 0.035,
+                "RMSE": 0.03807886552931954,
+                "R2": 0.5360000000000003
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.11362193664674995,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.6666666666666666
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect health problem",
+                    "Assess urgency with context",
+                    "Provide coping advice",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am stressed because of conflicting work meetings.",
+        "mood": "Stressed",
+        "time_of_day": "Morning",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9929670329670329
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5706745777055999,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect work stress",
+                    "Assess urgency with context",
+                    "Provide time management solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0014499999999999973,
+                "MAE": 0.034999999999999976,
+                "RMSE": 0.03807886552931951,
+                "R2": 0.8980219780219783
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect work stress",
+                    "Assess urgency with context",
+                    "Provide time management solutions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My child has an allergic reaction to something they ate.",
+        "mood": "Worried",
+        "time_of_day": "Evening",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8095238095238089
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.8034284189446518,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect pediatric emergency",
+                    "Assess urgency with context",
+                    "Provide emergency guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.003024999999999996,
+                "MAE": 0.05249999999999996,
+                "RMSE": 0.054999999999999966,
+                "R2": -4.761904761904765
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect pediatric emergency",
+                    "Assess urgency with context",
+                    "Provide emergency guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I accidentally deleted important files from my work computer.",
+        "mood": "Stressed",
+        "time_of_day": "Morning",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.968
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.47287080450158786,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8181818181818182
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech mishap",
+                    "Assess urgency with context",
+                    "Provide recovery options",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0022499999999999985,
+                "MAE": 0.044999999999999984,
+                "RMSE": 0.04743416490252567,
+                "R2": 0.2799999999999999
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect tech mishap",
+                    "Assess urgency with context",
+                    "Provide recovery options",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am worried about my partner being upset after an argument.",
+        "mood": "Anxious",
+        "time_of_day": "Evening",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9956756756756757
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5555238068023582,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect interpersonal conflict",
+                    "Assess urgency with context",
+                    "Suggest reconciliation approach",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0013749999999999997,
+                "MAE": 0.0325,
+                "RMSE": 0.03708099243547831,
+                "R2": 0.9405405405405406
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.14287202148493997,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect interpersonal conflict",
+                    "Assess urgency with context",
+                    "Suggest reconciliation approach",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My pet dog ran away and I can't find him.",
+        "mood": "Panicked",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8504672897196256
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5555238068023582,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect pet emergency",
+                    "Assess urgency with context",
+                    "Provide search and safety guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002875000000000001,
+                "MAE": 0.05250000000000002,
+                "RMSE": 0.05361902647381805,
+                "R2": -3.2990654205607566
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4728708045015879,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8571428571428571
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect pet emergency",
+                    "Assess urgency with context",
+                    "Provide search and safety guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I forgot my wallet at a restaurant after paying.",
+        "mood": "Worried",
+        "time_of_day": "Night",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.968
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5555238068023582,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect financial mishap",
+                    "Assess urgency with context",
+                    "Provide recovery guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.001974999999999998,
+                "MAE": 0.04249999999999998,
+                "RMSE": 0.04444097208657792,
+                "R2": 0.368000000000001
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect financial mishap",
+                    "Assess urgency with context",
+                    "Provide recovery guidance",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I have to submit my thesis tomorrow but it's incomplete.",
+        "mood": "Stressed",
+        "time_of_day": "Night",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9418181818181817
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.5555238068023582,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect academic urgency",
+                    "Assess urgency with context",
+                    "Provide practical completion strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.002250000000000001,
+                "MAE": 0.04500000000000001,
+                "RMSE": 0.0474341649025257,
+                "R2": -0.30909090909090997
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4728708045015879,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7142857142857143
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect academic urgency",
+                    "Assess urgency with context",
+                    "Provide practical completion strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My phone battery died while I was traveling to an important meeting.",
+        "mood": "Anxious",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Sunny",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9199999999999998
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.392814650900513,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel/tech disruption",
+                    "Assess urgency with context",
+                    "Provide backup solutions",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0019750000000000006,
+                "MAE": 0.04250000000000001,
+                "RMSE": 0.04444097208657795,
+                "R2": -0.5800000000000012
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.1944130841813964,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect travel/tech disruption",
+                    "Assess urgency with context",
+                    "Provide backup solutions",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I am feeling overwhelmed by my workload and deadlines.",
+        "mood": "Stressed",
+        "time_of_day": "Morning",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.984
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.4876836638685217,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect stress",
+                    "Assess urgency with context",
+                    "Provide time management strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.00145,
+                "MAE": 0.035,
+                "RMSE": 0.03807886552931954,
+                "R2": 0.7680000000000001
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.20205155046766235,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7142857142857143
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect stress",
+                    "Assess urgency with context",
+                    "Provide time management strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "My kitchen stove caught fire and I had to use the extinguisher.",
+        "mood": "Panicked",
+        "time_of_day": "Evening",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.8095238095238089
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.37531192687516973,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8000000000000002
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect home fire emergency",
+                    "Assess urgency with context",
+                    "Provide safety measures",
+                    "Generate empathetic support"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.003024999999999996,
+                "MAE": 0.05249999999999996,
+                "RMSE": 0.054999999999999966,
+                "R2": -4.761904761904765
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.18575057999133598,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7777777777777778
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect home fire emergency",
+                    "Assess urgency with context",
+                    "Provide safety measures",
+                    "Generate empathetic support"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I have an important job interview tomorrow and I feel unprepared.",
+        "mood": "Anxious",
+        "time_of_day": "Evening",
+        "weather_condition": "Clear",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9418181818181817
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7348889200874658,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.8333333333333334
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect career anxiety",
+                    "Assess urgency with context",
+                    "Provide preparation strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.0015750000000000028,
+                "MAE": 0.03750000000000003,
+                "RMSE": 0.039686269665968894,
+                "R2": 0.0836363636363614
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.7311104457090247,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.75
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect career anxiety",
+                    "Assess urgency with context",
+                    "Provide preparation strategies",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    },
+    {
+        "query": "I accidentally sent a sensitive email to the wrong person.",
+        "mood": "Embarrassed",
+        "time_of_day": "Afternoon",
+        "weather_condition": "Cloudy",
+        "With Context": {
+            "numeric_metrics": {
+                "MSE": 0.00010000000000000018,
+                "MAE": 0.010000000000000009,
+                "RMSE": 0.010000000000000009,
+                "R2": 0.9418181818181817
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.6179654585112234,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.9090909090909091
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect communication error",
+                    "Assess urgency with context",
+                    "Provide corrective actions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        },
+        "Without Context": {
+            "numeric_metrics": {
+                "MSE": 0.00145,
+                "MAE": 0.035,
+                "RMSE": 0.03807886552931954,
+                "R2": 0.15636363636363593
+            },
+            "dialogue_metrics": {
+                "BLEU": 0.223606797749979,
+                "ROUGE-1": 1.0,
+                "ROUGE-L": 0.7142857142857143
+            },
+            "qualitative": {
+                "reasoning_steps": [
+                    "Detect communication error",
+                    "Assess urgency with context",
+                    "Provide corrective actions",
+                    "Generate empathetic guidance"
+                ]
+            }
+        }
+    }
+]

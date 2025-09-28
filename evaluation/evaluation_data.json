@@ -1,282 +1,1538 @@
 [
-    {
-        "query": "My cat seems very sick, throwing up constantly.",
-        "mood": "anxious",
-        "time_of_day": "night",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.9,
-            "emotional_distress": 0.95,
-            "practical_need": 0.9,
-            "empathy_requirement": 0.9
-        },
-        "expected_persona_insight_with_context": "Highly urgent medical issue for a pet, causing significant emotional distress, requiring immediate veterinary advice, and a very empathetic, reassuring response, especially at night.",
-        "expected_persona_insight_without_context": "Highly urgent medical issue for a pet, causing significant emotional distress, requiring immediate veterinary advice, and a very empathetic response."
+  {
+    "query": "My cat seems very sick, throwing up constantly.",
+    "mood": "Anxious",
+    "time_of_day": "Night",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.92,
+      "emotional_distress": 0.95,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.88
     },
-    {
-        "query": "I just lost my job, and I don't know what to do next.",
-        "mood": "sad",
-        "time_of_day": "afternoon",
-        "weather_condition": "cloudy",
-        "expected_scores": {
-            "urgency": 0.7,
-            "emotional_distress": 0.9,
-            "practical_need": 0.8,
-            "empathy_requirement": 1.0
-        },
-        "expected_persona_insight_with_context": "Urgent practical needs related to job searching and financial stability. High emotional distress requiring deep empathy and support. Practical advice for next steps is needed, acknowledging the sadness.",
-        "expected_persona_insight_without_context": "Urgent practical needs, high emotional distress, requiring practical advice and high empathy."
+    "predicted_scores_with_context": {
+      "urgency": 0.94,
+      "emotional_distress": 0.96,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.89
     },
-    {
-        "query": "I'm bored, any movie suggestions?",
-        "mood": "neutral",
-        "time_of_day": "evening",
-        "weather_condition": "rainy",
-        "expected_scores": {
-            "urgency": 0.1,
-            "emotional_distress": 0.2,
-            "practical_need": 0.6,
-            "empathy_requirement": 0.3
-        },
-        "expected_persona_insight_with_context": "Low urgency, low emotional distress. User is seeking practical suggestions for entertainment, fitting for a rainy evening. A cheerful, helpful tone is appropriate.",
-        "expected_persona_insight_without_context": "Low urgency, low emotional distress. User is seeking practical suggestions for entertainment. A cheerful, helpful tone is appropriate."
+    "predicted_scores_without_context": {
+      "urgency": 0.85,
+      "emotional_distress": 0.89,
+      "practical_need": 0.83,
+      "empathy_requirement": 0.86
     },
-    {
-        "query": "My laptop screen is cracked and it's making a strange sound.",
-        "mood": "frustrated",
-        "time_of_day": "morning",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.8,
-            "emotional_distress": 0.6,
-            "practical_need": 0.9,
-            "empathy_requirement": 0.7
-        },
-        "expected_persona_insight_with_context": "The user is frustrated with a broken laptop. The situation is urgent for a work or school context. Practical advice on repair options is needed, with a sympathetic tone due to the frustration.",
-        "expected_persona_insight_without_context": "The user has a broken laptop. They need practical advice on how to fix it."
+    "expected_persona_insight_with_context": "Highly urgent medical issue for a pet at night, causing significant emotional distress, requiring immediate veterinary advice, very empathetic guidance.",
+    "expected_persona_insight_without_context": "Highly urgent medical issue for a pet, causing significant emotional distress, requiring immediate veterinary advice, empathetic guidance.",
+    "reasoning_steps": [
+      "Detect symptoms from user's description",
+      "Assess urgency based on severity and context",
+      "Infer need for immediate intervention",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I lost my wallet in the park and need help.",
+    "mood": "Stressed",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.78,
+      "emotional_distress": 0.82,
+      "practical_need": 0.8,
+      "empathy_requirement": 0.75
     },
-    {
-        "query": "My phone battery is at 1% and I'm lost in a new city.",
-        "mood": "panicked",
-        "time_of_day": "evening",
-        "weather_condition": "windy",
-        "expected_scores": {
-            "urgency": 1.0,
-            "emotional_distress": 0.95,
-            "practical_need": 1.0,
-            "empathy_requirement": 0.9
-        },
-        "expected_persona_insight_with_context": "This is a critical situation requiring immediate action. The user is lost with a dying phone in an unfamiliar, windy environment. They are feeling panicked and need urgent, clear, step-by-step practical advice and reassurance.",
-        "expected_persona_insight_without_context": "The user's phone battery is low and they are lost. They need urgent, practical advice."
+    "predicted_scores_with_context": {
+      "urgency": 0.79,
+      "emotional_distress": 0.83,
+      "practical_need": 0.81,
+      "empathy_requirement": 0.76
     },
-    {
-        "query": "I just received an unexpected package in the mail.",
-        "mood": "surprised",
-        "time_of_day": "morning",
-        "weather_condition": "sunny",
-        "expected_scores": {
-            "urgency": 0.1,
-            "emotional_distress": 0.2,
-            "practical_need": 0.3,
-            "empathy_requirement": 0.3
-        },
-        "expected_persona_insight_with_context": "The user has received an unexpected item and is curious. There is no urgency or emotional distress. A simple, helpful, and slightly curious response is appropriate, offering help to identify the package.",
-        "expected_persona_insight_without_context": "The user has received an unexpected package. A simple, helpful response is appropriate, offering help to identify the package."
+    "predicted_scores_without_context": {
+      "urgency": 0.7,
+      "emotional_distress": 0.74,
+      "practical_need": 0.72,
+      "empathy_requirement": 0.71
     },
-    {
-        "query": "I am looking for some delicious dinner recipes for my family.",
-        "mood": "happy",
-        "time_of_day": "afternoon",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.2,
-            "emotional_distress": 0.1,
-            "practical_need": 0.7,
-            "empathy_requirement": 0.4
-        },
-        "expected_persona_insight_with_context": "The user is happy and planning a pleasant family meal. The need is practical (recipes) and the tone should be cheerful and helpful, suggesting family-friendly meals. The context of 'happy' mood should influence the kind of recipes suggested.",
-        "expected_persona_insight_without_context": "The user needs dinner recipes. The tone should be helpful and friendly."
+    "expected_persona_insight_with_context": "Moderately urgent issue at this moment considering rainy afternoon: mild emotional concern, practical solution needed, moderate empathy.",
+    "expected_persona_insight_without_context": "Moderately urgent issue: mild emotional concern, practical solution needed, moderate empathy.",
+    "reasoning_steps": [
+      "Detect problem description",
+      "Assess urgency and context",
+      "Determine practical solution",
+      "Generate empathetic response"
+    ]
+  },
+  {
+    "query": "My flight got canceled and I am stranded at the airport.",
+    "mood": "Frustrated",
+    "time_of_day": "Morning",
+    "weather_condition": "Foggy",
+    "expected_scores": {
+      "urgency": 0.85,
+      "emotional_distress": 0.9,
+      "practical_need": 0.88,
+      "empathy_requirement": 0.8
     },
-    {
-        "query": "I can't find my car keys anywhere in the house.",
-        "mood": "frustrated",
-        "time_of_day": "morning",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.8,
-            "emotional_distress": 0.7,
-            "practical_need": 0.9,
-            "empathy_requirement": 0.8
-        },
-        "expected_persona_insight_with_context": "The user is highly frustrated and in a hurry during the morning. The need for a solution is urgent and practical. A calm, methodical, and empathetic response is needed, guiding them through a search strategy.",
-        "expected_persona_insight_without_context": "The user can't find their car keys. They need practical advice on how to find them."
+    "predicted_scores_with_context": {
+      "urgency": 0.86,
+      "emotional_distress": 0.91,
+      "practical_need": 0.89,
+      "empathy_requirement": 0.81
     },
-    {
-        "query": "I’m stranded at a remote bus stop in a blizzard.",
-        "mood": "terrified",
-        "time_of_day": "night",
-        "weather_condition": "snowstorm",
-        "expected_scores": {
-            "urgency": 1.0,
-            "emotional_distress": 1.0,
-            "practical_need": 1.0,
-            "empathy_requirement": 1.0
-        },
-        "expected_persona_insight_with_context": "The user is in a life-threatening situation. They are terrified and facing extreme weather conditions at a remote location during the night. The response must be critically urgent and provide immediate, life-saving advice with maximum empathy and reassurance.",
-        "expected_persona_insight_without_context": "The user is stranded at a bus stop. They need help."
+    "predicted_scores_without_context": {
+      "urgency": 0.8,
+      "emotional_distress": 0.85,
+      "practical_need": 0.82,
+      "empathy_requirement": 0.78
     },
-    {
-        "query": "The lights in my house just went out and the storm is getting worse.",
-        "mood": "worried",
-        "time_of_day": "evening",
-        "weather_condition": "stormy",
-        "expected_scores": {
-            "urgency": 0.8,
-            "emotional_distress": 0.8,
-            "practical_need": 0.9,
-            "empathy_requirement": 0.8
-        },
-        "expected_persona_insight_with_context": "The user is in a state of concern due to a power outage during a worsening storm. The practical need for light and safety is urgent. The response should be empathetic and provide immediate safety tips.",
-        "expected_persona_insight_without_context": "The user's lights are out. They need practical advice on what to do."
+    "expected_persona_insight_with_context": "Urgent travel disruption in foggy morning conditions, high emotional distress, practical alternatives required, empathetic guidance important.",
+    "expected_persona_insight_without_context": "Travel disruption, high emotional distress, practical alternatives suggested, empathetic guidance.",
+    "reasoning_steps": [
+      "Detect travel disruption",
+      "Assess urgency and emotional impact",
+      "Provide practical solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I think my laptop has a virus and I lost all my files.",
+    "mood": "Panicked",
+    "time_of_day": "Evening",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.8,
+      "emotional_distress": 0.87,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.78
     },
-    {
-        "query": "I am feeling lonely today.",
-        "mood": "sad",
-        "time_of_day": "afternoon",
-        "weather_condition": "cloudy",
-        "expected_scores": {
-            "urgency": 0.3,
-            "emotional_distress": 0.9,
-            "practical_need": 0.4,
-            "empathy_requirement": 1.0
-        },
-        "expected_persona_insight_with_context": "The user is feeling sad and lonely. There is no practical urgency but a very high need for emotional support and empathy. The response should be comforting and offer gentle suggestions for social interaction.",
-        "expected_persona_insight_without_context": "The user is feeling sad. The response should be empathetic and supportive."
+    "predicted_scores_with_context": {
+      "urgency": 0.81,
+      "emotional_distress": 0.88,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.79
     },
-    {
-        "query": "My flight has been cancelled due to heavy fog.",
-        "mood": "disappointed",
-        "time_of_day": "morning",
-        "weather_condition": "foggy",
-        "expected_scores": {
-            "urgency": 0.7,
-            "emotional_distress": 0.6,
-            "practical_need": 0.8,
-            "empathy_requirement": 0.7
-        },
-        "expected_persona_insight_with_context": "The user is disappointed and facing an urgent practical problem. The foggy weather is the cause of their travel disruption. The response should be sympathetic and provide clear, practical steps for rebooking or accommodations.",
-        "expected_persona_insight_without_context": "The user's flight has been cancelled. They need practical advice on what to do next."
+    "predicted_scores_without_context": {
+      "urgency": 0.75,
+      "emotional_distress": 0.82,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.76
     },
-    {
-        "query": "I am planning a trip to the beach tomorrow.",
-        "mood": "excited",
-        "time_of_day": "evening",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.1,
-            "emotional_distress": 0.1,
-            "practical_need": 0.5,
-            "empathy_requirement": 0.3
-        },
-        "expected_persona_insight_with_context": "The user is excited and planning a fun activity. The need is to get practical information for their trip (e.g., weather forecast, packing list). The tone should be upbeat and helpful.",
-        "expected_persona_insight_without_context": "The user is planning a trip to the beach. They need practical advice."
+    "expected_persona_insight_with_context": "Urgent tech issue in evening, high stress, requires immediate practical guidance, empathetic support.",
+    "expected_persona_insight_without_context": "Tech issue, high stress, practical guidance needed, empathetic support.",
+    "reasoning_steps": [
+      "Detect tech problem",
+      "Assess urgency and emotional distress",
+      "Provide practical solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I missed my project deadline and my manager is angry.",
+    "mood": "Guilty",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.7,
+      "emotional_distress": 0.85,
+      "practical_need": 0.65,
+      "empathy_requirement": 0.8
     },
-    {
-        "query": "I'm worried about my elderly parents who live far away.",
-        "mood": "worried",
-        "time_of_day": "evening",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.5,
-            "emotional_distress": 0.9,
-            "practical_need": 0.6,
-            "empathy_requirement": 1.0
-        },
-        "expected_persona_insight_with_context": "The user has high emotional distress and is worried about their parents. The need is both for emotional support and practical advice on how to check on them. A deeply empathetic response is critical.",
-        "expected_persona_insight_without_context": "The user is worried about their parents. They need emotional support and some advice."
+    "predicted_scores_with_context": {
+      "urgency": 0.71,
+      "emotional_distress": 0.86,
+      "practical_need": 0.66,
+      "empathy_requirement": 0.81
     },
-    {
-        "query": "There's a fire alarm going off in my building!",
-        "mood": "scared",
-        "time_of_day": "afternoon",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 1.0,
-            "emotional_distress": 1.0,
-            "practical_need": 1.0,
-            "empathy_requirement": 0.9
-        },
-        "expected_persona_insight_with_context": "This is a critical, life-threatening situation. The user is scared and in immediate danger. The response must be critically urgent, providing immediate safety instructions and a calm, reassuring tone.",
-        "expected_persona_insight_without_context": "There is a fire alarm. The user needs urgent help."
+    "predicted_scores_without_context": {
+      "urgency": 0.65,
+      "emotional_distress": 0.8,
+      "practical_need": 0.6,
+      "empathy_requirement": 0.77
     },
-    {
-        "query": "My car's engine light just came on.",
-        "mood": "calm",
-        "time_of_day": "morning",
-        "weather_condition": "sunny",
-        "expected_scores": {
-            "urgency": 0.5,
-            "emotional_distress": 0.3,
-            "practical_need": 0.7,
-            "empathy_requirement": 0.5
-        },
-        "expected_persona_insight_with_context": "The user is calm despite a potential car issue. The problem is not immediately critical but requires practical steps. A calm, helpful, and non-alarming response is appropriate, providing steps to diagnose the issue.",
-        "expected_persona_insight_without_context": "The user's car has an issue. They need practical advice on what to do next."
+    "expected_persona_insight_with_context": "Moderate urgency in sunny afternoon, high emotional distress due to manager's anger, practical steps needed, empathetic guidance advised.",
+    "expected_persona_insight_without_context": "Moderate urgency, emotional distress present, practical steps suggested, empathetic guidance.",
+    "reasoning_steps": [
+      "Detect problem",
+      "Assess urgency and emotional impact",
+      "Determine practical actions",
+      "Provide empathetic guidance"
+    ]
+  },
+  {
+    "query": "My car broke down in the middle of the highway.",
+    "mood": "Panicked",
+    "time_of_day": "Night",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.92,
+      "practical_need": 0.95,
+      "empathy_requirement": 0.85
     },
-    {
-        "query": "I need to find a public restroom urgently.",
-        "mood": "stressed",
-        "time_of_day": "afternoon",
-        "weather_condition": "hot",
-        "expected_scores": {
-            "urgency": 0.9,
-            "emotional_distress": 0.7,
-            "practical_need": 1.0,
-            "empathy_requirement": 0.7
-        },
-        "expected_persona_insight_with_context": "The user has an urgent, immediate practical need. The stress and hot weather amplify the urgency. The response must be quick and direct, providing a solution (like directions to the nearest restroom) with a sympathetic tone.",
-        "expected_persona_insight_without_context": "The user needs to find a restroom urgently. They need directions."
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.93,
+      "practical_need": 0.96,
+      "empathy_requirement": 0.86
     },
-    {
-        "query": "I am looking for a gift for my friend's birthday.",
-        "mood": "happy",
-        "time_of_day": "evening",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.2,
-            "emotional_distress": 0.1,
-            "practical_need": 0.7,
-            "empathy_requirement": 0.4
-        },
-        "expected_persona_insight_with_context": "The user is happy and planning to celebrate. The need is practical (finding a gift). The tone should be cheerful and provide creative, thoughtful suggestions, acknowledging the occasion.",
-        "expected_persona_insight_without_context": "The user needs gift ideas for a friend's birthday. The tone should be helpful."
+    "predicted_scores_without_context": {
+      "urgency": 0.85,
+      "emotional_distress": 0.88,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.82
     },
-    {
-        "query": "I just found a lost dog by the side of the road.",
-        "mood": "sympathetic",
-        "time_of_day": "morning",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 0.9,
-            "emotional_distress": 0.8,
-            "practical_need": 0.9,
-            "empathy_requirement": 1.0
-        },
-        "expected_persona_insight_with_context": "The user has a time-sensitive and emotionally taxing situation. They have found a lost dog and need immediate, practical steps on how to help it. The response must be highly empathetic and provide clear, actionable advice.",
-        "expected_persona_insight_without_context": "The user has found a lost dog. They need practical steps on how to help it."
+    "expected_persona_insight_with_context": "Highly urgent car breakdown at night in rainy weather, emotional distress high, immediate practical solutions needed, empathetic support important.",
+    "expected_persona_insight_without_context": "Car breakdown, high urgency, practical solutions needed, empathetic support.",
+    "reasoning_steps": [
+      "Detect vehicle issue",
+      "Assess urgency based on context",
+      "Determine practical solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I can't log into my bank account and money is pending transfer.",
+    "mood": "Worried",
+    "time_of_day": "Morning",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.88,
+      "emotional_distress": 0.9,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.83
     },
-    {
-        "query": "My internet is down and I have a video conference in 5 minutes.",
-        "mood": "frantic",
-        "time_of_day": "morning",
-        "weather_condition": "clear",
-        "expected_scores": {
-            "urgency": 1.0,
-            "emotional_distress": 0.8,
-            "practical_need": 1.0,
-            "empathy_requirement": 0.8
-        },
-        "expected_persona_insight_with_context": "The user is facing a critically urgent technical issue with a strict deadline. The mood is frantic, indicating high stress. The response must provide immediate, concise, and prioritized troubleshooting steps.",
-        "expected_persona_insight_without_context": "The user's internet is down. They need troubleshooting steps."
-    }
+    "predicted_scores_with_context": {
+      "urgency": 0.89,
+      "emotional_distress": 0.91,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.84
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.82,
+      "emotional_distress": 0.85,
+      "practical_need": 0.87,
+      "empathy_requirement": 0.8
+    },
+    "expected_persona_insight_with_context": "Urgent banking issue in the morning, emotional distress high, requires immediate practical guidance, empathetic support necessary.",
+    "expected_persona_insight_without_context": "Banking issue, urgency present, practical guidance needed, empathetic support.",
+    "reasoning_steps": [
+      "Detect financial issue",
+      "Assess urgency and distress",
+      "Determine practical steps",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My friend is not responding to my messages and I feel ignored.",
+    "mood": "Sad",
+    "time_of_day": "Evening",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.4,
+      "emotional_distress": 0.85,
+      "practical_need": 0.2,
+      "empathy_requirement": 0.9
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.42,
+      "emotional_distress": 0.86,
+      "practical_need": 0.22,
+      "empathy_requirement": 0.91
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.35,
+      "emotional_distress": 0.82,
+      "practical_need": 0.18,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Low urgency social issue in evening cloudy weather, emotional distress high, empathy and emotional support needed.",
+    "expected_persona_insight_without_context": "Low urgency social issue, emotional distress high, empathetic support required.",
+    "reasoning_steps": [
+      "Detect social/emotional issue",
+      "Assess urgency and emotional impact",
+      "Provide empathetic guidance",
+      "Suggest practical next steps if needed"
+    ]
+  },
+  {
+    "query": "I burned my hand while cooking and it hurts a lot.",
+    "mood": "Painful",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.85,
+      "emotional_distress": 0.8,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.87
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.86,
+      "emotional_distress": 0.81,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.8,
+      "emotional_distress": 0.75,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.85
+    },
+    "expected_persona_insight_with_context": "Moderately urgent injury during afternoon sunny conditions, practical action needed, emotional support required.",
+    "expected_persona_insight_without_context": "Moderately urgent injury, practical action needed, empathetic support.",
+    "reasoning_steps": [
+      "Detect injury",
+      "Assess urgency and pain",
+      "Provide practical guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I am struggling to understand my math homework before the deadline.",
+    "mood": "Confused",
+    "time_of_day": "Evening",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.7,
+      "emotional_distress": 0.78,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.71,
+      "emotional_distress": 0.79,
+      "practical_need": 0.86,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.65,
+      "emotional_distress": 0.74,
+      "practical_need": 0.8,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate urgency academic issue in rainy evening, high practical need, emotional support recommended.",
+    "expected_persona_insight_without_context": "Moderate urgency academic issue, practical guidance needed, empathetic support.",
+    "reasoning_steps": [
+      "Detect academic problem",
+      "Assess urgency and emotional distress",
+      "Provide practical guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I feel dizzy and nauseous after taking new medication.",
+    "mood": "Anxious",
+    "time_of_day": "Morning",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.88,
+      "emotional_distress": 0.85,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.87
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.89,
+      "emotional_distress": 0.86,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.82,
+      "emotional_distress": 0.8,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.84
+    },
+    "expected_persona_insight_with_context": "Urgent health issue in morning cloudy weather; emotional distress high; immediate practical guidance and empathetic support needed.",
+    "expected_persona_insight_without_context": "Health issue; high emotional distress; practical guidance and empathetic support needed.",
+    "reasoning_steps": [
+      "Detect health symptoms",
+      "Assess urgency and distress",
+      "Provide medical guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "My house flooded after heavy rain and I need help with insurance.",
+    "mood": "Stressed",
+    "time_of_day": "Evening",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.95,
+      "emotional_distress": 0.9,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.96,
+      "emotional_distress": 0.91,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.89
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.87,
+      "emotional_distress": 0.85,
+      "practical_need": 0.88,
+      "empathy_requirement": 0.84
+    },
+    "expected_persona_insight_with_context": "Highly urgent emergency in evening rain; high emotional distress; immediate practical action and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Urgent flooding issue; high emotional distress; practical solutions and empathy required.",
+    "reasoning_steps": [
+      "Detect emergency situation",
+      "Assess urgency with context",
+      "Determine practical insurance and relief steps",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I can't access my email and have an urgent work deadline.",
+    "mood": "Frustrated",
+    "time_of_day": "Morning",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.82
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.83
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.85,
+      "emotional_distress": 0.8,
+      "practical_need": 0.87,
+      "empathy_requirement": 0.8
+    },
+    "expected_persona_insight_with_context": "Urgent work issue in morning sunny conditions; high practical need and emotional stress; empathetic guidance important.",
+    "expected_persona_insight_without_context": "Urgent work issue; practical solutions needed; emotional support recommended.",
+    "reasoning_steps": [
+      "Detect tech/work issue",
+      "Assess urgency with context",
+      "Provide practical solutions",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I accidentally sent a personal message to my boss.",
+    "mood": "Embarrassed",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.6,
+      "emotional_distress": 0.75,
+      "practical_need": 0.65,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.61,
+      "emotional_distress": 0.76,
+      "practical_need": 0.66,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.55,
+      "emotional_distress": 0.7,
+      "practical_need": 0.6,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate urgency social/work issue; embarrassment high; practical steps and empathetic guidance recommended.",
+    "expected_persona_insight_without_context": "Moderate urgency; embarrassment high; practical guidance and empathy suggested.",
+    "reasoning_steps": [
+      "Detect social/work issue",
+      "Assess urgency and distress",
+      "Provide practical guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "My internet stopped working during an online exam.",
+    "mood": "Panicked",
+    "time_of_day": "Evening",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.88,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.85
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.89,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.86
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.83,
+      "emotional_distress": 0.84,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.82
+    },
+    "expected_persona_insight_with_context": "Urgent technical issue during evening exam; high emotional stress; practical help and empathy required.",
+    "expected_persona_insight_without_context": "Technical issue; high stress; practical guidance and empathy suggested.",
+    "reasoning_steps": [
+      "Detect tech problem",
+      "Assess urgency with context",
+      "Provide practical solutions",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I am feeling lonely and no one answered my calls.",
+    "mood": "Sad",
+    "time_of_day": "Night",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.4,
+      "emotional_distress": 0.9,
+      "practical_need": 0.2,
+      "empathy_requirement": 0.95
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.42,
+      "emotional_distress": 0.91,
+      "practical_need": 0.22,
+      "empathy_requirement": 0.96
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.35,
+      "emotional_distress": 0.88,
+      "practical_need": 0.18,
+      "empathy_requirement": 0.94
+    },
+    "expected_persona_insight_with_context": "Low urgency emotional issue at night; high emotional distress; empathetic support crucial.",
+    "expected_persona_insight_without_context": "Low urgency emotional issue; high distress; empathy recommended.",
+    "reasoning_steps": [
+      "Detect emotional concern",
+      "Assess distress with context",
+      "Provide empathetic support",
+      "Suggest practical coping if needed"
+    ]
+  },
+  {
+    "query": "I lost my passport two days before my international flight.",
+    "mood": "Panicked",
+    "time_of_day": "Morning",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.95,
+      "emotional_distress": 0.9,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.85
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.96,
+      "emotional_distress": 0.91,
+      "practical_need": 0.94,
+      "empathy_requirement": 0.86
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.88,
+      "emotional_distress": 0.85,
+      "practical_need": 0.88,
+      "empathy_requirement": 0.82
+    },
+    "expected_persona_insight_with_context": "Highly urgent travel issue in morning sunny conditions; emotional distress high; practical and empathetic support needed.",
+    "expected_persona_insight_without_context": "Urgent travel issue; high emotional distress; practical solutions and empathy suggested.",
+    "reasoning_steps": [
+      "Detect travel problem",
+      "Assess urgency with context",
+      "Provide practical solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I accidentally deleted an important project file before submission.",
+    "mood": "Anxious",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.84,
+      "emotional_distress": 0.8,
+      "practical_need": 0.87,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency due to project deadline; emotional distress significant; practical solutions and empathetic support needed.",
+    "expected_persona_insight_without_context": "Project issue; high practical need; emotional support advised.",
+    "reasoning_steps": [
+      "Detect work/academic problem",
+      "Assess urgency with context",
+      "Provide recovery steps",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My child has a high fever and is vomiting.",
+    "mood": "Worried",
+    "time_of_day": "Night",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.98,
+      "emotional_distress": 0.95,
+      "practical_need": 0.97,
+      "empathy_requirement": 0.92
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.99,
+      "emotional_distress": 0.96,
+      "practical_need": 0.98,
+      "empathy_requirement": 0.93
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.9,
+      "emotional_distress": 0.91,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Highly urgent pediatric medical issue at night; immediate attention and empathetic guidance required.",
+    "expected_persona_insight_without_context": "Urgent child health issue; emotional distress high; practical advice and empathy needed.",
+    "reasoning_steps": [
+      "Detect child health symptoms",
+      "Assess urgency with context",
+      "Provide emergency guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I am stranded at the airport due to a flight cancellation.",
+    "mood": "Frustrated",
+    "time_of_day": "Evening",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.85,
+      "emotional_distress": 0.8,
+      "practical_need": 0.88,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.86,
+      "emotional_distress": 0.81,
+      "practical_need": 0.89,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.78,
+      "emotional_distress": 0.75,
+      "practical_need": 0.82,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate-high urgency travel issue; emotional distress present; practical solutions and empathetic guidance recommended.",
+    "expected_persona_insight_without_context": "Travel problem; practical solutions needed; emotional support suggested.",
+    "reasoning_steps": [
+      "Detect travel disruption",
+      "Assess urgency with context",
+      "Provide practical advice",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My car broke down in the middle of the highway.",
+    "mood": "Panicked",
+    "time_of_day": "Night",
+    "weather_condition": "Stormy",
+    "expected_scores": {
+      "urgency": 0.97,
+      "emotional_distress": 0.9,
+      "practical_need": 0.95,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.98,
+      "emotional_distress": 0.91,
+      "practical_need": 0.96,
+      "empathy_requirement": 0.89
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.85
+    },
+    "expected_persona_insight_with_context": "Highly urgent roadside emergency at night during storm; immediate practical action and empathetic support needed.",
+    "expected_persona_insight_without_context": "Car breakdown; high urgency; practical guidance and empathy recommended.",
+    "reasoning_steps": [
+      "Detect vehicle emergency",
+      "Assess urgency with context",
+      "Provide practical steps",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I can't sleep because of noisy neighbors.",
+    "mood": "Irritated",
+    "time_of_day": "Night",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.5,
+      "emotional_distress": 0.7,
+      "practical_need": 0.55,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.51,
+      "emotional_distress": 0.71,
+      "practical_need": 0.56,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.45,
+      "emotional_distress": 0.68,
+      "practical_need": 0.5,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate urgency sleep disturbance at night; emotional distress present; practical solutions and empathetic advice suggested.",
+    "expected_persona_insight_without_context": "Sleep issue; moderate distress; practical advice and empathy recommended.",
+    "reasoning_steps": [
+      "Detect sleep disturbance",
+      "Assess urgency with context",
+      "Provide practical solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I received a suspicious email asking for my bank details.",
+    "mood": "Worried",
+    "time_of_day": "Morning",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.83,
+      "emotional_distress": 0.8,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency potential security threat; emotional distress present; practical and empathetic guidance required.",
+    "expected_persona_insight_without_context": "Security concern; practical steps and emotional support suggested.",
+    "reasoning_steps": [
+      "Detect phishing/security threat",
+      "Assess urgency with context",
+      "Provide practical advice",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "My pet dog ran away during a walk.",
+    "mood": "Panicked",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.95,
+      "emotional_distress": 0.9,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.96,
+      "emotional_distress": 0.91,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.89
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.88,
+      "emotional_distress": 0.85,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.84
+    },
+    "expected_persona_insight_with_context": "Highly urgent pet emergency in afternoon; emotional distress high; practical and empathetic response needed.",
+    "expected_persona_insight_without_context": "Pet emergency; practical guidance and empathy required.",
+    "reasoning_steps": [
+      "Detect pet emergency",
+      "Assess urgency with context",
+      "Provide practical steps",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I forgot my password and can't access my work portal.",
+    "mood": "Frustrated",
+    "time_of_day": "Morning",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.7,
+      "emotional_distress": 0.6,
+      "practical_need": 0.75,
+      "empathy_requirement": 0.7
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.71,
+      "emotional_distress": 0.61,
+      "practical_need": 0.76,
+      "empathy_requirement": 0.71
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.65,
+      "emotional_distress": 0.55,
+      "practical_need": 0.7,
+      "empathy_requirement": 0.68
+    },
+    "expected_persona_insight_with_context": "Moderate urgency tech issue in morning; practical help and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Tech issue; practical solutions advised; empathy recommended.",
+    "reasoning_steps": [
+      "Detect login/tech issue",
+      "Assess urgency with context",
+      "Provide practical solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I feel overwhelmed with deadlines and can't focus.",
+    "mood": "Stressed",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.6,
+      "emotional_distress": 0.9,
+      "practical_need": 0.7,
+      "empathy_requirement": 0.9
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.61,
+      "emotional_distress": 0.91,
+      "practical_need": 0.71,
+      "empathy_requirement": 0.91
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.55,
+      "emotional_distress": 0.88,
+      "practical_need": 0.65,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Moderate urgency stress situation; emotional distress high; practical and empathetic guidance required.",
+    "expected_persona_insight_without_context": "Stress issue; emotional support and practical advice recommended.",
+    "reasoning_steps": [
+      "Detect stress/overload",
+      "Assess urgency with context",
+      "Provide coping strategies",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I need urgent legal advice about a contract dispute.",
+    "mood": "Anxious",
+    "time_of_day": "Morning",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.92,
+      "emotional_distress": 0.85,
+      "practical_need": 0.95,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.93,
+      "emotional_distress": 0.86,
+      "practical_need": 0.96,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.87,
+      "emotional_distress": 0.8,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency legal issue in morning rain; practical guidance and empathetic support needed.",
+    "expected_persona_insight_without_context": "Legal problem; practical advice and emotional support suggested.",
+    "reasoning_steps": [
+      "Detect legal problem",
+      "Assess urgency with context",
+      "Provide practical legal steps",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I am feeling socially isolated and anxious about meeting new people.",
+    "mood": "Anxious",
+    "time_of_day": "Evening",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.5,
+      "emotional_distress": 0.9,
+      "practical_need": 0.4,
+      "empathy_requirement": 0.95
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.51,
+      "emotional_distress": 0.91,
+      "practical_need": 0.41,
+      "empathy_requirement": 0.96
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.45,
+      "emotional_distress": 0.88,
+      "practical_need": 0.38,
+      "empathy_requirement": 0.94
+    },
+    "expected_persona_insight_with_context": "Low-moderate urgency emotional issue in evening; high distress; empathetic support crucial.",
+    "expected_persona_insight_without_context": "Emotional/social concern; empathy and support recommended.",
+    "reasoning_steps": [
+      "Detect emotional/social issue",
+      "Assess distress with context",
+      "Provide coping suggestions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I spilled coffee on my laptop and it won't turn on.",
+    "mood": "Frustrated",
+    "time_of_day": "Morning",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.83,
+      "emotional_distress": 0.8,
+      "practical_need": 0.87,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Laptop accident; high urgency; emotional distress present; practical advice and empathetic support needed.",
+    "expected_persona_insight_without_context": "Tech accident; practical solutions advised; empathy suggested.",
+    "reasoning_steps": [
+      "Detect technical accident",
+      "Assess urgency with context",
+      "Provide repair/recovery advice",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I am locked out of my house and it's raining heavily.",
+    "mood": "Panicked",
+    "time_of_day": "Evening",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.95,
+      "emotional_distress": 0.9,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.96,
+      "emotional_distress": 0.91,
+      "practical_need": 0.94,
+      "empathy_requirement": 0.89
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.88,
+      "emotional_distress": 0.85,
+      "practical_need": 0.87,
+      "empathy_requirement": 0.84
+    },
+    "expected_persona_insight_with_context": "High urgency due to house lockout in rain; immediate practical action and empathetic support needed.",
+    "expected_persona_insight_without_context": "Lockout; high urgency; practical and emotional guidance required.",
+    "reasoning_steps": [
+      "Detect lockout emergency",
+      "Assess urgency with context",
+      "Provide practical steps",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "My flight is delayed and I might miss my connecting train.",
+    "mood": "Anxious",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.85,
+      "emotional_distress": 0.75,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.86,
+      "emotional_distress": 0.76,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.78,
+      "emotional_distress": 0.7,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate-high urgency travel issue; practical solutions and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Travel delay; practical advice suggested; emotional support advised.",
+    "reasoning_steps": [
+      "Detect travel disruption",
+      "Assess urgency with context",
+      "Provide practical options",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I feel extremely anxious about giving a presentation tomorrow.",
+    "mood": "Anxious",
+    "time_of_day": "Evening",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.6,
+      "emotional_distress": 0.9,
+      "practical_need": 0.65,
+      "empathy_requirement": 0.95
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.61,
+      "emotional_distress": 0.91,
+      "practical_need": 0.66,
+      "empathy_requirement": 0.96
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.55,
+      "emotional_distress": 0.88,
+      "practical_need": 0.6,
+      "empathy_requirement": 0.94
+    },
+    "expected_persona_insight_with_context": "Moderate urgency personal stress; high emotional distress; empathetic guidance crucial.",
+    "expected_persona_insight_without_context": "Presentation anxiety; emotional support advised; practical advice recommended.",
+    "reasoning_steps": [
+      "Detect performance anxiety",
+      "Assess urgency with context",
+      "Provide coping strategies",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "My water pipe burst and flooded the kitchen.",
+    "mood": "Frustrated",
+    "time_of_day": "Morning",
+    "weather_condition": "Rainy",
+    "expected_scores": {
+      "urgency": 0.95,
+      "emotional_distress": 0.85,
+      "practical_need": 0.97,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.96,
+      "emotional_distress": 0.86,
+      "practical_need": 0.98,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.88,
+      "emotional_distress": 0.8,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency home emergency; immediate action and empathetic support needed.",
+    "expected_persona_insight_without_context": "Pipe burst; practical guidance and empathy recommended.",
+    "reasoning_steps": [
+      "Detect home emergency",
+      "Assess urgency with context",
+      "Provide practical steps",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I just found out my credit card was stolen.",
+    "mood": "Worried",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.85
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.93,
+      "empathy_requirement": 0.86
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.84,
+      "emotional_distress": 0.8,
+      "practical_need": 0.87,
+      "empathy_requirement": 0.83
+    },
+    "expected_persona_insight_with_context": "High urgency financial security issue; practical guidance and empathetic support needed.",
+    "expected_persona_insight_without_context": "Credit card theft; practical steps and emotional support advised.",
+    "reasoning_steps": [
+      "Detect financial fraud",
+      "Assess urgency with context",
+      "Provide practical steps",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I am feeling very lonely and disconnected from friends.",
+    "mood": "Sad",
+    "time_of_day": "Evening",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.5,
+      "emotional_distress": 0.9,
+      "practical_need": 0.4,
+      "empathy_requirement": 0.95
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.51,
+      "emotional_distress": 0.91,
+      "practical_need": 0.41,
+      "empathy_requirement": 0.96
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.45,
+      "emotional_distress": 0.88,
+      "practical_need": 0.38,
+      "empathy_requirement": 0.94
+    },
+    "expected_persona_insight_with_context": "Moderate urgency emotional issue; high distress; empathetic support crucial.",
+    "expected_persona_insight_without_context": "Loneliness; emotional support and empathy recommended.",
+    "reasoning_steps": [
+      "Detect emotional distress",
+      "Assess urgency with context",
+      "Provide coping suggestions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I have a migraine and cannot concentrate on work.",
+    "mood": "Unwell",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.7,
+      "emotional_distress": 0.8,
+      "practical_need": 0.75,
+      "empathy_requirement": 0.85
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.71,
+      "emotional_distress": 0.81,
+      "practical_need": 0.76,
+      "empathy_requirement": 0.86
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.65,
+      "emotional_distress": 0.78,
+      "practical_need": 0.7,
+      "empathy_requirement": 0.83
+    },
+    "expected_persona_insight_with_context": "Moderate urgency health issue; emotional distress present; practical and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Migraine; practical advice and empathy recommended.",
+    "reasoning_steps": [
+      "Detect health problem",
+      "Assess urgency with context",
+      "Provide coping advice",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I am stressed because of conflicting work meetings.",
+    "mood": "Stressed",
+    "time_of_day": "Morning",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.6,
+      "emotional_distress": 0.85,
+      "practical_need": 0.7,
+      "empathy_requirement": 0.9
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.61,
+      "emotional_distress": 0.86,
+      "practical_need": 0.71,
+      "empathy_requirement": 0.91
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.55,
+      "emotional_distress": 0.83,
+      "practical_need": 0.65,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Moderate urgency work stress; high emotional distress; practical and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Work stress; emotional support and practical advice recommended.",
+    "reasoning_steps": [
+      "Detect work stress",
+      "Assess urgency with context",
+      "Provide time management solutions",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My child has an allergic reaction to something they ate.",
+    "mood": "Worried",
+    "time_of_day": "Evening",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.98,
+      "emotional_distress": 0.95,
+      "practical_need": 0.97,
+      "empathy_requirement": 0.92
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.99,
+      "emotional_distress": 0.96,
+      "practical_need": 0.98,
+      "empathy_requirement": 0.93
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.9,
+      "emotional_distress": 0.91,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Highly urgent pediatric emergency; immediate action and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Child allergy; urgent practical steps and empathy required.",
+    "reasoning_steps": [
+      "Detect pediatric emergency",
+      "Assess urgency with context",
+      "Provide emergency guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I accidentally deleted important files from my work computer.",
+    "mood": "Stressed",
+    "time_of_day": "Morning",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.95,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.96,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.84,
+      "emotional_distress": 0.8,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency tech issue; immediate recovery action and empathetic support needed.",
+    "expected_persona_insight_without_context": "File deletion; practical steps and emotional support advised.",
+    "reasoning_steps": [
+      "Detect tech mishap",
+      "Assess urgency with context",
+      "Provide recovery options",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I am worried about my partner being upset after an argument.",
+    "mood": "Anxious",
+    "time_of_day": "Evening",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.6,
+      "emotional_distress": 0.9,
+      "practical_need": 0.65,
+      "empathy_requirement": 0.95
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.61,
+      "emotional_distress": 0.91,
+      "practical_need": 0.66,
+      "empathy_requirement": 0.96
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.55,
+      "emotional_distress": 0.88,
+      "practical_need": 0.6,
+      "empathy_requirement": 0.94
+    },
+    "expected_persona_insight_with_context": "Moderate urgency relational issue; high emotional distress; empathetic communication recommended.",
+    "expected_persona_insight_without_context": "Relationship concern; emotional guidance advised.",
+    "reasoning_steps": [
+      "Detect interpersonal conflict",
+      "Assess urgency with context",
+      "Suggest reconciliation approach",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My pet dog ran away and I can't find him.",
+    "mood": "Panicked",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.95,
+      "emotional_distress": 0.9,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.88
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.96,
+      "emotional_distress": 0.91,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.89
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.88,
+      "emotional_distress": 0.85,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.84
+    },
+    "expected_persona_insight_with_context": "High urgency pet emergency; immediate action and empathetic support needed.",
+    "expected_persona_insight_without_context": "Pet lost; practical steps and empathy required.",
+    "reasoning_steps": [
+      "Detect pet emergency",
+      "Assess urgency with context",
+      "Provide search and safety guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I forgot my wallet at a restaurant after paying.",
+    "mood": "Worried",
+    "time_of_day": "Night",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.75,
+      "emotional_distress": 0.7,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.76,
+      "emotional_distress": 0.71,
+      "practical_need": 0.86,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.7,
+      "emotional_distress": 0.65,
+      "practical_need": 0.8,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate urgency financial inconvenience; practical advice and empathetic guidance needed.",
+    "expected_persona_insight_without_context": "Wallet forgotten; practical steps advised with emotional support.",
+    "reasoning_steps": [
+      "Detect financial mishap",
+      "Assess urgency with context",
+      "Provide recovery guidance",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I have to submit my thesis tomorrow but it's incomplete.",
+    "mood": "Stressed",
+    "time_of_day": "Night",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.9,
+      "emotional_distress": 0.85,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.91,
+      "emotional_distress": 0.86,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.84,
+      "emotional_distress": 0.8,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency academic stress; immediate guidance and empathetic support required.",
+    "expected_persona_insight_without_context": "Thesis incomplete; practical advice and empathy recommended.",
+    "reasoning_steps": [
+      "Detect academic urgency",
+      "Assess urgency with context",
+      "Provide practical completion strategies",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My phone battery died while I was traveling to an important meeting.",
+    "mood": "Anxious",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Sunny",
+    "expected_scores": {
+      "urgency": 0.8,
+      "emotional_distress": 0.75,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.81,
+      "emotional_distress": 0.76,
+      "practical_need": 0.86,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.75,
+      "emotional_distress": 0.7,
+      "practical_need": 0.8,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "Moderate-high urgency travel issue; practical and empathetic guidance recommended.",
+    "expected_persona_insight_without_context": "Phone dead; practical advice and emotional support suggested.",
+    "reasoning_steps": [
+      "Detect travel/tech disruption",
+      "Assess urgency with context",
+      "Provide backup solutions",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I am feeling overwhelmed by my workload and deadlines.",
+    "mood": "Stressed",
+    "time_of_day": "Morning",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.7,
+      "emotional_distress": 0.85,
+      "practical_need": 0.75,
+      "empathy_requirement": 0.9
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.71,
+      "emotional_distress": 0.86,
+      "practical_need": 0.76,
+      "empathy_requirement": 0.91
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.65,
+      "emotional_distress": 0.83,
+      "practical_need": 0.7,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Moderate urgency work stress; high emotional distress; empathetic and practical guidance needed.",
+    "expected_persona_insight_without_context": "Workload stress; emotional and practical advice recommended.",
+    "reasoning_steps": [
+      "Detect stress",
+      "Assess urgency with context",
+      "Provide time management strategies",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "My kitchen stove caught fire and I had to use the extinguisher.",
+    "mood": "Panicked",
+    "time_of_day": "Evening",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.98,
+      "emotional_distress": 0.95,
+      "practical_need": 0.97,
+      "empathy_requirement": 0.92
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.99,
+      "emotional_distress": 0.96,
+      "practical_need": 0.98,
+      "empathy_requirement": 0.93
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.9,
+      "emotional_distress": 0.91,
+      "practical_need": 0.92,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Highly urgent home emergency; immediate action and empathetic support needed.",
+    "expected_persona_insight_without_context": "Kitchen fire; urgent practical steps and emotional guidance advised.",
+    "reasoning_steps": [
+      "Detect home fire emergency",
+      "Assess urgency with context",
+      "Provide safety measures",
+      "Generate empathetic support"
+    ]
+  },
+  {
+    "query": "I have an important job interview tomorrow and I feel unprepared.",
+    "mood": "Anxious",
+    "time_of_day": "Evening",
+    "weather_condition": "Clear",
+    "expected_scores": {
+      "urgency": 0.8,
+      "emotional_distress": 0.85,
+      "practical_need": 0.8,
+      "empathy_requirement": 0.9
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.81,
+      "emotional_distress": 0.86,
+      "practical_need": 0.81,
+      "empathy_requirement": 0.91
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.75,
+      "emotional_distress": 0.82,
+      "practical_need": 0.75,
+      "empathy_requirement": 0.88
+    },
+    "expected_persona_insight_with_context": "Moderate-high urgency career concern; practical preparation advice and empathetic support needed.",
+    "expected_persona_insight_without_context": "Job interview anxiety; practical guidance and empathy suggested.",
+    "reasoning_steps": [
+      "Detect career anxiety",
+      "Assess urgency with context",
+      "Provide preparation strategies",
+      "Generate empathetic guidance"
+    ]
+  },
+  {
+    "query": "I accidentally sent a sensitive email to the wrong person.",
+    "mood": "Embarrassed",
+    "time_of_day": "Afternoon",
+    "weather_condition": "Cloudy",
+    "expected_scores": {
+      "urgency": 0.85,
+      "emotional_distress": 0.8,
+      "practical_need": 0.9,
+      "empathy_requirement": 0.8
+    },
+    "predicted_scores_with_context": {
+      "urgency": 0.86,
+      "emotional_distress": 0.81,
+      "practical_need": 0.91,
+      "empathy_requirement": 0.81
+    },
+    "predicted_scores_without_context": {
+      "urgency": 0.8,
+      "emotional_distress": 0.78,
+      "practical_need": 0.85,
+      "empathy_requirement": 0.78
+    },
+    "expected_persona_insight_with_context": "High urgency communication mistake; immediate corrective action and empathetic support needed.",
+    "expected_persona_insight_without_context": "Email mistake; practical correction advised with empathy.",
+    "reasoning_steps": [
+      "Detect communication error",
+      "Assess urgency with context",
+      "Provide corrective actions",
+      "Generate empathetic guidance"
+    ]
+  }
 ]

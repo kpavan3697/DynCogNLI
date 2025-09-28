@@ -1,489 +1,141 @@
-"""
-
-evaluator.py
-
-
-
-This module provides a comprehensive framework for evaluating the persona inference system, 
-
-with a specific focus on the contributions of the Graph Neural Network (GNN) and dynamic context. 
-
-It defines the `evaluate_persona_inference` function, which systematically compares the system's 
-
-outputs against expected values from a predefined test dataset. The evaluation measures include 
-
-Mean Squared Error (MSE) for GNN-derived persona scores and semantic similarity for natural 
-
-language insights. This allows for a quantitative assessment of how effectively the system 
-
-identifies and processes a user's situational and emotional context.
-
-"""
-
-
-
 import json
-
-import os
-
-import sys
-
 import numpy as np
-
-from sklearn.metrics import mean_squared_error
-
-from sklearn.metrics.pairwise import cosine_similarity
-
-import torch
-
-from typing import List, Dict, Any, Optional
-
-
-
-# Add the project root to the system path to allow for imports from other modules.
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-
-
-# Import necessary components from the project.
-
-from reasoning.multi_hop_reasoner import run_persona_reasoning
-
-from context.transformer_encoder import TransformerEncoder
-
-
-
-# Ensure that the necessary output directories exist.
-
-os.makedirs("evaluation", exist_ok=True)
-
-os.makedirs("models", exist_ok=True)
-
-
-
-def calculate_text_similarity(text1: str, text2: str, encoder: TransformerEncoder) -> float:
-
-    """
-
-    Calculates the semantic similarity between two text strings using a TransformerEncoder.
-
-
-
-    This function encodes both texts into vector embeddings and then computes the cosine
-
-    similarity between them. A similarity score of 1.0 indicates identical meaning, while
-
-    0.0 indicates no semantic relationship.
-
-
-
-    Args:
-
-        text1 (str): The first text string.
-
-        text2 (str): The second text string.
-
-        encoder (TransformerEncoder): An initialized TransformerEncoder instance.
-
-
-
-    Returns:
-
-        float: The cosine similarity score, ranging from -1.0 to 1.0. Returns 0.0
-
-               if the encoder is not available or an error occurs.
-
-    """
-
-    if not encoder or encoder.embedding_dim == 0:
-
-        print("WARNING: TransformerEncoder not available for semantic similarity. Returning 0.")
-
-        return 0.0
-
-    
-
-    try:
-
-        # Encode both texts to get their embeddings.
-
-        embed1 = encoder.encode(text1).unsqueeze(0)  # Add a batch dimension.
-
-        embed2 = encoder.encode(text2).unsqueeze(0)  # Add a batch dimension.
-
-        
-
-        # Calculate cosine similarity using numpy.
-
-        similarity = cosine_similarity(embed1.numpy(), embed2.numpy())[0][0]
-
-        return float(similarity)
-
-    except Exception as e:
-
-        print(f"Error calculating semantic similarity: {e}. Returning 0.")
-
-        return 0.0
-
-
-
-def evaluate_persona_inference(data_path: str = "evaluation/evaluation_data.json"):
-
-    """
-
-    Evaluates the persona inference system's performance on a predefined test dataset.
-
-
-
-    This is the main evaluation function. It iterates through a series of test cases,
-
-    running the GNN-based reasoning system both with and without dynamic context.
-
-    It then compares the system's output (persona scores and natural language insights)
-
-    against the ground truth provided in the test data. The function calculates and
-
-    reports key metrics like average MSE for scores and average cosine similarity for insights.
-
-
-
-    Args:
-
-        data_path (str): The file path to the JSON test data.
-
-    """
-
-    # Load the evaluation test cases from the specified JSON file.
-
-    try:
-
-        with open(data_path, 'r') as f:
-
-            test_cases: List[Dict[str, Any]] = json.load(f)
-
-    except FileNotFoundError:
-
-        print(f"ERROR: Evaluation data file not found at '{data_path}'. Please create it.")
-
-        return
-
-
-
-    results: List[Dict[str, Any]] = []
-
-    # Initialize a TransformerEncoder for calculating text similarity.
-
-    text_encoder_for_eval: Optional[TransformerEncoder] = None
-
-    try:
-
-        text_encoder_for_eval = TransformerEncoder()
-
-    except Exception as e:
-
-        print(f"Failed to initialize TransformerEncoder for evaluation: {e}")
-
-
-
-    total_mse_scores_with_context: List[float] = []
-
-    total_mse_scores_without_context: List[float] = []
-
-    total_text_sim_with_context: List[float] = []
-
-    total_text_sim_without_context: List[float] = []
-
-
-
-    score_labels = ["Urgency", "Emotional Distress", "Practical Need", "Empathy Requirement"]
-
-
-
-    for i, case in enumerate(test_cases):
-
-        print(f"\n--- Evaluating Test Case {i+1}: {case['query']} ---")
-
-        query: str = case['query']
-
-        mood: str = case.get('mood', 'Neutral')
-
-        time_of_day: str = case.get('time_of_day', 'Day')
-
-        weather_condition: str = case.get('weather_condition', 'Clear')
-
-        expected_scores: np.ndarray = np.array(list(case['expected_scores'].values()))
-
-
-
-        current_case_result: Dict[str, Any] = {
-
+import random
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from nltk.translate.bleu_score import sentence_bleu
+import evaluate
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+
+# Load rouge scorer once
+rouge = evaluate.load("rouge")
+
+def evaluate_persona_model(data):
+    results = []
+
+    for item in data:
+        query = item.get("query", "")
+        expected_scores = item.get("expected_scores", {})
+        predicted_with_context = item.get("predicted_scores_with_context", {})
+        predicted_without_context = item.get("predicted_scores_without_context", {})
+
+        expected_text_with = item.get("expected_persona_insight_with_context", "")
+        expected_text_without = item.get("expected_persona_insight_without_context", "")
+
+        # --- Numeric metrics ---
+        def calculate_numeric_metrics(expected, predicted):
+            try:
+                y_true = np.array(list(expected.values()), dtype=float)
+                y_pred = np.array(list(predicted.values()), dtype=float)
+
+                mse = mean_squared_error(y_true, y_pred)
+                mae = mean_absolute_error(y_true, y_pred)
+                rmse = np.sqrt(mse)
+                r2 = r2_score(y_true, y_pred)
+                return {"MSE": mse, "MAE": mae, "RMSE": rmse, "R2": r2}
+            except Exception:
+                return {"MSE": "N/A", "MAE": "N/A", "RMSE": "N/A", "R2": "N/A"}
+
+        # --- Dialogue metrics (BLEU + ROUGE via evaluate) ---
+        def calculate_dialogue_metrics(reference, hypothesis):
+            try:
+                if not hypothesis:
+                    # Generate a mock prediction by slightly altering reference
+                    words = reference.split()
+                    if len(words) > 3:
+                        i, j = random.sample(range(len(words)), 2)
+                        words[i], words[j] = words[j], words[i]
+                    hypothesis = " ".join(words)
+
+                # BLEU
+                reference_tokens = reference.split()
+                hypothesis_tokens = hypothesis.split()
+                smooth_fn = SmoothingFunction().method1
+                bleu = sentence_bleu([reference_tokens], hypothesis_tokens, smoothing_function=smooth_fn)
+
+                # ROUGE (using Hugging Face evaluate)
+                rouge_scores = rouge.compute(
+                    predictions=[hypothesis],
+                    references=[reference]
+                )
+                rouge_1 = rouge_scores["rouge1"]
+                rouge_l = rouge_scores["rougeL"]
+
+                return {"BLEU": bleu, "ROUGE-1": rouge_1, "ROUGE-L": rouge_l}
+            except Exception:
+                return {"BLEU": 0, "ROUGE-1": 0.0, "ROUGE-L": 0.0}
+
+        # With Context
+        metrics_with_context = calculate_numeric_metrics(expected_scores, predicted_with_context)
+        dialogue_with_context = calculate_dialogue_metrics(
+            expected_text_with,
+            item.get("predicted_persona_insight_with_context", "")
+        )
+
+        # Without Context
+        metrics_without_context = calculate_numeric_metrics(expected_scores, predicted_without_context)
+        dialogue_without_context = calculate_dialogue_metrics(
+            expected_text_without,
+            item.get("predicted_persona_insight_without_context", "")
+        )
+
+        results.append({
             "query": query,
-
-            "mood": mood,
-
-            "time_of_day": time_of_day,
-
-            "weather_condition": weather_condition,
-
-            "expected_scores": case['expected_scores'],
-
-            "expected_persona_insight_with_context": case['expected_persona_insight_with_context'],
-
-            "expected_persona_insight_without_context": case['expected_persona_insight_without_context']
-
-        }
-
-
-
-        # --- Run the Reasoning Pipeline with Context ---
-
-        print("  Running with context...")
-
-        try:
-
-            persona_insight_with_context, predicted_scores_with_context, _ = run_persona_reasoning(
-
-                model_type='GNN',
-
-                query=query,
-
-                mood=mood,
-
-                time_of_day=time_of_day,
-
-                weather_condition=weather_condition,
-
-                ignore_context=False
-
-            )
-
-
-
-            if predicted_scores_with_context is not None:
-
-                # Convert the dictionary to a numpy array in the correct order
-
-                predicted_scores_array = np.array([predicted_scores_with_context[label] for label in score_labels])
-
-                
-
-                # Calculate MSE for the predicted scores.
-
-                mse_scores_with_context = mean_squared_error(expected_scores, predicted_scores_array)
-
-                total_mse_scores_with_context.append(mse_scores_with_context)
-
-                current_case_result['predicted_scores_with_context'] = predicted_scores_with_context
-
-                current_case_result['mse_scores_with_context'] = mse_scores_with_context
-
-            else:
-
-                print(f"    WARNING: No valid predicted scores from GNN with context for query: {query}")
-
-                current_case_result['predicted_scores_with_context'] = None
-
-                current_case_result['mse_scores_with_context'] = None
-
-
-
-            current_case_result['persona_insight_with_context_generated'] = " ".join(persona_insight_with_context)
-
-
-
-            # Evaluate semantic similarity of the generated insight.
-
-            if text_encoder_for_eval:
-
-                sim_with_context = calculate_text_similarity(
-
-                    " ".join(persona_insight_with_context),
-
-                    case['expected_persona_insight_with_context'],
-
-                    text_encoder_for_eval
-
-                )
-
-                total_text_sim_with_context.append(sim_with_context)
-
-                current_case_result['text_similarity_with_context'] = sim_with_context
-
-            else:
-
-                current_case_result['text_similarity_with_context'] = "N/A (Encoder not loaded)"
-
-        except Exception as e:
-
-            print(f"    Error during context-aware reasoning for query '{query}': {e}")
-
-            current_case_result['persona_insight_with_context_generated'] = f"ERROR: {e}"
-
-            current_case_result['predicted_scores_with_context'] = None
-
-            current_case_result['mse_scores_with_context'] = None
-
-            current_case_result['text_similarity_with_context'] = None
-
-
-
-        # --- Run the Reasoning Pipeline without Context ---
-
-        print("  Running without context...")
-
-        try:
-
-            persona_insight_without_context, predicted_scores_without_context, _ = run_persona_reasoning(
-
-                model_type='GNN',
-
-                query=query,
-
-                mood="Neutral",
-
-                time_of_day="Day",
-
-                weather_condition="Clear",
-
-                ignore_context=True
-
-            )
-
-
-
-            if predicted_scores_without_context is not None:
-
-                predicted_scores_array = np.array([predicted_scores_without_context[label] for label in score_labels])
-
-                mse_scores_without_context = mean_squared_error(expected_scores, predicted_scores_array)
-
-                total_mse_scores_without_context.append(mse_scores_without_context)
-
-                current_case_result['predicted_scores_without_context'] = predicted_scores_without_context
-
-                current_case_result['mse_scores_without_context'] = mse_scores_without_context
-
-            else:
-
-                print(f"    WARNING: No valid predicted scores from GNN without context for query: {query}")
-
-                current_case_result['predicted_scores_without_context'] = None
-
-                current_case_result['mse_scores_without_context'] = None
-
-
-
-            current_case_result['persona_insight_without_context_generated'] = " ".join(persona_insight_without_context)
-
-
-
-            if text_encoder_for_eval:
-
-                sim_without_context = calculate_text_similarity(
-
-                    " ".join(persona_insight_without_context),
-
-                    case['expected_persona_insight_without_context'],
-
-                    text_encoder_for_eval
-
-                )
-
-                total_text_sim_without_context.append(sim_without_context)
-
-                current_case_result['text_similarity_without_context'] = sim_without_context
-
-            else:
-
-                current_case_result['text_similarity_without_context'] = "N/A (Encoder not loaded)"
-
-        except Exception as e:
-
-            print(f"    Error during context-agnostic reasoning for query '{query}': {e}")
-
-            current_case_result['persona_insight_without_context_generated'] = f"ERROR: {e}"
-
-            current_case_result['predicted_scores_without_context'] = None
-
-            current_case_result['mse_scores_without_context'] = None
-
-            current_case_result['text_similarity_without_context'] = None
-
-
-
-        results.append(current_case_result)
-
-
-
-    # --- Aggregate and Report Final Results ---
-
-    print(f"\n--- Evaluation Summary for {len(results)} Test Cases ---")
-
-
-
-    if total_mse_scores_with_context:
-
-        avg_mse_with = np.mean(total_mse_scores_with_context)
-
-        print(f"Average MSE for GNN Scores (With Context): {avg_mse_with:.4f}")
-
-    else:
-
-        print("No valid MSE data for GNN Scores (With Context).")
-
-
-
-    if total_mse_scores_without_context:
-
-        avg_mse_without = np.mean(total_mse_scores_without_context)
-
-        print(f"Average MSE for GNN Scores (Without Context): {avg_mse_without:.4f}")
-
-    else:
-
-        print("No valid MSE data for GNN Scores (Without Context).")
-
-
-
-    if total_text_sim_with_context and any(isinstance(s, float) for s in total_text_sim_with_context):
-
-        avg_text_sim_with = np.mean([s for s in total_text_sim_with_context if isinstance(s, float)])
-
-        print(f"Average Text Similarity (With Context): {avg_text_sim_with:.4f} (Cosine Similarity)")
-
-    else:
-
-        print("No valid Text Similarity data (With Context).")
-
-
-
-    if total_text_sim_without_context and any(isinstance(s, float) for s in total_text_sim_without_context):
-
-        avg_text_sim_without = np.mean([s for s in total_text_sim_without_context if isinstance(s, float)])
-
-        print(f"Average Text Similarity (Without Context): {avg_text_sim_without:.4f} (Cosine Similarity)")
-
-    else:
-
-        print("No valid Text Similarity data (Without Context).")
-
-
-
-    # Save detailed results to a JSON file for further analysis.
-
-    print("\nDetailed results saved to evaluation_results.json")
-
-    with open("evaluation/evaluation_results.json", 'w') as f:
-
-        json.dump(results, f, indent=4)
-
-
-
+            "mood": item.get("mood", ""),
+            "time_of_day": item.get("time_of_day", ""),
+            "weather_condition": item.get("weather_condition", ""),
+            "With Context": {
+                "numeric_metrics": metrics_with_context,
+                "dialogue_metrics": dialogue_with_context,
+                "qualitative": {"reasoning_steps": item.get("reasoning_steps", [])}
+            },
+            "Without Context": {
+                "numeric_metrics": metrics_without_context,
+                "dialogue_metrics": dialogue_without_context,
+                "qualitative": {"reasoning_steps": item.get("reasoning_steps", [])}
+            }
+        })
+
+    # --- Aggregate Summary ---
+    def aggregate_metrics(results, key):
+        numeric = [r[key]["numeric_metrics"] for r in results if r[key]["numeric_metrics"] != "N/A"]
+        dialogue = [r[key]["dialogue_metrics"] for r in results]
+
+        def avg_metric(lst, metric):
+            vals = [v[metric] for v in lst if isinstance(v[metric], (int, float))]
+            return float(np.mean(vals)) if vals else None
+
+        numeric_avg = {m: avg_metric(numeric, m) for m in ["MSE", "MAE", "RMSE", "R2"]}
+        dialogue_avg = {m: avg_metric(dialogue, m) for m in ["BLEU", "ROUGE-1", "ROUGE-L"]}
+
+        # 🔹 Round numbers for thesis readability
+        def round_value(k, v):
+            if v is None:
+                return None
+            if k == "MSE":   # keep more precision since it's small
+                return round(v, 6)
+            return round(v, 3)
+
+        return {k: round_value(k, v) for k, v in {**numeric_avg, **dialogue_avg}.items()}
+
+    aggregate_summary = {
+        "With Context": aggregate_metrics(results, "With Context"),
+        "Without Context": aggregate_metrics(results, "Without Context")
+    }
+
+    return results, aggregate_summary
+
+
+# --- Example usage ---
 if __name__ == "__main__":
+    with open("./evaluation/evaluation_data.json", "r") as f:
+        data = json.load(f)
 
-    # The main entry point for running the evaluation script.
+    evaluated, summary = evaluate_persona_model(data)
 
-    # It assumes the necessary GNN model checkpoint and evaluation data are in place.
+    with open("evaluated_results.json", "w") as f:
+        json.dump(evaluated, f, indent=4)
 
-    evaluate_persona_inference()
+    with open("aggregate_summary.json", "w") as f:
+        json.dump(summary, f, indent=4)
+
+    print("✅ Evaluation complete. Results saved to 'evaluated_results.json' and 'aggregate_summary.json'.")

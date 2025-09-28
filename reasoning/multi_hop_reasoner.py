@@ -39,7 +39,7 @@ _model_expected_input_dim = None
 
 # --- Constants ---
 # The number of output dimensions of the GNN, corresponding to the four persona traits.
-OUTPUT_DIM = 4 
+OUTPUT_DIM = 4
 
 # Fallback dimensions if the model checkpoint doesn't contain this information.
 DEFAULT_TRANSFORMER_EMBEDDING_DIM = 384  # Matches MiniLM-L6-v2 default
@@ -85,14 +85,14 @@ def _load_gnn_model(model_path: str = "models/persona_gnn_model.pth") -> Optiona
                 _gnn_model.eval() # Set the model to evaluation mode
                 
                 _model_expected_input_dim = input_dim
-                print(f"✅ GNN Model loaded successfully from {model_path} with input_dim={input_dim}.")
+                print(f"GNN Model loaded successfully from {model_path} with input_dim={input_dim}.")
                 
             except Exception as e:
-                print(f"❌ Error loading GNN model from {model_path}: {e}")
+                print(f"Error loading GNN model from {model_path}: {e}")
                 _gnn_model = None
         else:
             # Fallback to a dummy model if the checkpoint doesn't exist
-            print(f"⚠️ WARNING: GNN model not found at {model_path}. "
+            print(f"WARNING: GNN model not found at {model_path}. "
                   f"Please run `python train_gnn.py` first. Initializing dummy model configuration.")
             
             dummy_input_dim = (DEFAULT_TRANSFORMER_EMBEDDING_DIM +
@@ -131,12 +131,12 @@ def _load_baseline_model(model_path: str = "models/baseline_ffn_model.pth") -> O
                 _baseline_model = SimpleModel(input_dim=input_dim, hidden_dim=hidden_dim, output_dim=OUTPUT_DIM).to(device)
                 _baseline_model.load_state_dict(state_dict['model_state_dict'])
                 _baseline_model.eval()
-                print(f"✅ Baseline FFN model loaded successfully from {model_path}.")
+                print(f"Baseline FFN model loaded successfully from {model_path}.")
             except Exception as e:
-                print(f"❌ Error loading baseline model from {model_path}: {e}")
+                print(f"Error loading baseline model from {model_path}: {e}")
                 _baseline_model = None
         else:
-            print(f"⚠️ WARNING: Baseline FFN model not found at {model_path}.")
+            print(f"WARNING: Baseline FFN model not found at {model_path}.")
             _baseline_model = None
     return _baseline_model
 
@@ -147,7 +147,7 @@ def get_transformer_encoder() -> Optional[TransformerEncoder]:
         try:
             _transformer_encoder = TransformerEncoder()
         except Exception as e:
-            print(f"❌ Error initializing TransformerEncoder: {e}")
+            print(f"Error initializing TransformerEncoder: {e}")
             _transformer_encoder = None
     return _transformer_encoder
 
@@ -158,7 +158,7 @@ def get_context_encoder() -> Optional[ContextEncoder]:
         try:
             _context_encoder = ContextEncoder()
         except Exception as e:
-            print(f"❌ Error initializing ContextEncoder: {e}")
+            print(f"Error initializing ContextEncoder: {e}")
             _context_encoder = None
     return _context_encoder
 
@@ -198,10 +198,10 @@ def visualize_subgraph(nx_graph: nx.Graph, query: str, output_path: str) -> Opti
         os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
         plt.savefig(output_path, bbox_inches='tight')
         plt.close()
-        print(f"✅ Subgraph visualization saved to {output_path}")
+        print(f"Subgraph visualization saved to {output_path}")
         return output_path
     except Exception as e:
-        print(f"❌ Error saving subgraph visualization to {output_path}: {e}")
+        print(f"Error saving subgraph visualization to {output_path}: {e}")
         plt.close()
         return None
 
@@ -224,11 +224,10 @@ def interpret_gnn_output_for_persona(scores: torch.Tensor, user_query: str, user
         scores = torch.zeros(OUTPUT_DIM)
     
     urgency, emotional_distress, practical_need, empathy_requirement = scores.tolist()
-
+    
     insight = []
     insight.append(f"Based on the query '{user_query}' and the contextual factors ({user_mood}, {time_of_day}, {weather_condition}):")
-    insight.append("") # Spacer
-
+    
     # Detailed interpretation of scores with dynamic descriptions
     insight.append(f"**Urgency:** {urgency:.2f} - " + 
                      ("Highly urgent, requiring immediate attention." if urgency > 0.7 else
@@ -236,39 +235,51 @@ def interpret_gnn_output_for_persona(scores: torch.Tensor, user_query: str, user
                       "Low urgency."))
 
     insight.append(f"**Emotional Distress:** {emotional_distress:.2f} - " +
-                      ("Significant emotional distress likely." if emotional_distress > 0.7 else
-                       "Some emotional discomfort possible." if emotional_distress > 0.4 else
-                       "Appears emotionally stable."))
+                     ("Significant emotional distress likely." if emotional_distress > 0.7 else
+                      "Some emotional discomfort possible." if emotional_distress > 0.4 else
+                      "Appears emotionally stable."))
 
     insight.append(f"**Practical Need:** {practical_need:.2f} - " +
-                      ("Immediate, concrete steps needed to resolve the core issue." if practical_need > 0.7 else
-                       "Practical assistance or information needed." if practical_need > 0.4 else
-                       "Not primarily looking for direct practical help."))
+                     ("Immediate, concrete steps needed to resolve the core issue." if practical_need > 0.7 else
+                      "Practical assistance or information needed." if practical_need > 0.4 else
+                      "Not primarily looking for direct practical help."))
 
     insight.append(f"**Empathy Requirement:** {empathy_requirement:.2f} - " +
-                      ("High degree of empathy and reassurance required." if empathy_requirement > 0.7 else
-                       "Moderate empathy and understanding needed." if empathy_requirement > 0.4 else
-                       "A direct and straightforward approach might be suitable."))
-    
-    insight.append("\n**Recommended Approach:**")
+                     ("High degree of empathy and reassurance required." if empathy_requirement > 0.7 else
+                      "Moderate empathy and understanding needed." if empathy_requirement > 0.4 else
+                      "A direct and straightforward approach might be suitable."))
+
+    # Recommended Approach Section
+    insight.append("")
+    insight.append("**Recommended Approach:**")
     summary_points = []
-    if urgency > 0.7: summary_points.append("act swiftly")
-    elif urgency > 0.4: summary_points.append("address with attention to time")
-    else: summary_points.append("take a considered approach")
+    
+    max_score = max(urgency, emotional_distress, practical_need, empathy_requirement)
+    
+    if max_score > 0.5:
+        if urgency == max_score:
+            summary_points.append("Prioritize an immediate response to address the time-sensitive nature of the request")
+        elif emotional_distress == max_score:
+            summary_points.append("Start with an empathetic and compassionate tone to address the user's emotional state")
+        elif practical_need == max_score:
+            summary_points.append("Provide a clear, step-by-step solution or direct instructions to solve the problem")
+        elif empathy_requirement == max_score:
+            summary_points.append("Use a warm and reassuring tone throughout the interaction to build trust")
+    else:
+        # Fallback for low-scoring personas, implies a balanced approach
+        summary_points.append("Maintain a balanced and professional tone, as no single need stands out")
+    
+    if urgency > 0.4 and "immediate response" not in summary_points[0]:
+        summary_points.append("Quickly assess the situation to determine if an urgent solution is necessary")
+    if emotional_distress > 0.4 and "empathetic and compassionate" not in summary_points[0]:
+        summary_points.append("Acknowledge the user's feelings and offer reassurance")
+    if practical_need > 0.4 and "step-by-step solution" not in summary_points[0]:
+        summary_points.append("Focus on providing actionable information to help the user solve their problem")
+    if empathy_requirement > 0.4 and "warm and reassuring" not in summary_points[0]:
+        summary_points.append("Show understanding and patience in your communication")
 
-    if emotional_distress > 0.7: summary_points.append("be highly empathetic and reassuring")
-    elif emotional_distress > 0.4: summary_points.append("show understanding for potential discomfort")
-    else: summary_points.append("maintain a calm and objective tone")
-
-    if practical_need > 0.7: summary_points.append("offer concrete solutions and actionable advice")
-    elif practical_need > 0.4: summary_points.append("provide useful information or guidance")
-    else: summary_points.append("focus on general discussion or informational support")
-
-    if empathy_requirement > 0.7: summary_points.append("prioritize emotional support")
-    elif empathy_requirement > 0.4: summary_points.append("balance practicality with emotional awareness")
-    else: summary_points.append("be direct and efficient")
-
-    insight.append(f"    - To effectively respond, you should: {', '.join(summary_points)}.")
+    if len(summary_points) > 0:
+        insight.append(f"To effectively respond, you should: {', '.join(summary_points)}.")
     
     return insight
 
@@ -319,8 +330,8 @@ def _run_gnn_reasoning_logic(
     total_input_feature_dim = _model_expected_input_dim 
     if total_input_feature_dim is None or total_input_feature_dim == 0:
         total_input_feature_dim = (BASE_NODE_FEATURE_SIZE + 
-                                (query_embedding_tensor.shape[0] if query_embedding_tensor is not None else 0) +
-                                (context_embedding_tensor.shape[0] if context_embedding_tensor is not None else 0))
+                                 (query_embedding_tensor.shape[0] if query_embedding_tensor is not None else 0) +
+                                 (context_embedding_tensor.shape[0] if context_embedding_tensor is not None else 0))
         if total_input_feature_dim == 0:
             print("CRITICAL ERROR: Calculated GNN input dimension is zero. Check BASE_NODE_FEATURE_SIZE and encoder dimensions.")
             return ["Error: GNN input dimension is zero. Please check console for details."], {
