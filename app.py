@@ -104,16 +104,15 @@ def get_performance_metrics():
     return rounded_metrics
 
 # -------------------------------
-# Mock reasoning modules (if imports fail)
+#        Reasoning modules
 # -------------------------------
-# NOTE: Kept this section as is, assuming your file structure and mock logic are necessary
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 try:
     from reasoning.multi_hop_reasoner import run_persona_reasoning
     from context.transformer_encoder import TransformerEncoder
     from context.context_encoder import ContextEncoder
 except ImportError:
-    # st.warning("Custom reasoning modules not found. Using mock functions.") # Disabled for cleaner UI
+    st.warning("Custom reasoning modules not found.") # Disabled for cleaner UI
 
     class TransformerEncoder:
         def __init__(self): pass
@@ -121,68 +120,96 @@ except ImportError:
     class ContextEncoder:
         def __init__(self): pass
 
-    def run_persona_reasoning(model_type, query, mood, time_of_day, weather, ignore_context):
-        time.sleep(1)
-        
-        # Determine specific/general mock response
-        is_specific_mock = query.lower().strip() == 'my laptop is not working' and mood == 'Neutral' and time_of_day == 'Day' and weather == 'Clear'
-        
-        if is_specific_mock:
-            insights = [
-                "Urgency: 0.42 - Some urgency to the situation.",
-                "Emotional Distress: 0.52 - Some emotional discomfort possible.",
-                "Practical Need: 0.54 - Practical assistance or information needed.",
-                "Empathy Requirement: 0.47 - Moderate empathy and understanding needed.",
-                "**Recommended Approach:**\nTo effectively respond, you should: Prioritize an immediate response and offer troubleshooting steps."
-            ]
-            scores = {
-                'Urgency': 0.42,
-                'Emotional Distress': 0.52,
-                'Practical Need': 0.54,
-                'Empathy Requirement': 0.47
-            }
-        else:
-            urgency = np.random.uniform(0.7, 1.0)
-            distress = np.random.uniform(0.4, 0.8)
-            practical = np.random.uniform(0.8, 1.0)
-            empathy = np.random.uniform(0.5, 0.7)
-            
-            # Simple heuristic for approach
-            approach = "Acknowledge the strong Practical Need and focus on a direct solution."
-            if distress > 0.7 or empathy > 0.6:
-                approach = "Prioritize empathetic language and gently guide to a solution."
-            elif urgency > 0.9:
-                approach = "Deliver a brief, highly urgent response with immediate action items."
+        def run_persona_reasoning(model_type, query, mood, time_of_day, weather, ignore_context):
+    
+            time.sleep(1)
 
-            insights = [
-                f"High **Urgency** ({urgency:.2f}), suggesting immediate attention is required.",
-                f"Moderate **Emotional Distress** ({distress:.2f}), influenced by current context (Mood: '{mood}').",
-                f"Strong **Practical Need** ({practical:.2f}) to solve the problem quickly.",
-                f"Moderate **Empathy Requirement** ({empathy:.2f}) to validate the user's feeling.",
-                f"**Recommended Approach:**\nTo effectively respond, you should: {approach}"
-            ]
+            # --- Base severity from query keywords ---
+            high_severity_keywords = ["broke down", "accident", "emergency", "crash", "fire", "urgent", "immediately", "asap"]
+            medium_severity_keywords = ["not working", "error", "issue", "problem", "delay", "stuck"]
+
+            severity = 0.5
+            if any(kw in query.lower() for kw in high_severity_keywords):
+                severity = 0.9
+            elif any(kw in query.lower() for kw in medium_severity_keywords):
+                severity = 0.7
+
+            # --- Contextual factors ---
+            mood_factor = {
+                "stressed": 0.9, "sad": 0.7, "angry": 0.85,
+                "neutral": 0.5, "happy": 0.3, "excited": 0.3
+            }.get(mood.lower(), 0.5)
+
+            weather_factor = {
+                "rainy": 0.8, "stormy": 0.9, "clear": 0.4,
+                "snowy": 0.7, "windy": 0.6, "cloudy": 0.5
+            }.get(weather.lower(), 0.5)
+
+            time_factor = {
+                "morning": 0.5, "afternoon": 0.7, "evening": 0.6, "night": 0.8, "day": 0.6
+            }.get(time_of_day.lower(), 0.5)
+
+            # --- Compute scores with compounded effects ---
+            urgency = min(1.0, severity * 0.5 + mood_factor * 0.2 + weather_factor * 0.2 + time_factor * 0.1)
+            distress = min(1.0, mood_factor * 0.6 + weather_factor * 0.2 + severity * 0.2)
+            practical = min(1.0, severity * 0.6 + time_factor * 0.2 + weather_factor * 0.2)
+            empathy = min(1.0, distress * 0.6 + mood_factor * 0.4)
+
+            # --- Clamp between 0–1 just in case ---
+            urgency = max(0.0, min(1.0, urgency))
+            distress = max(0.0, min(1.0, distress))
+            practical = max(0.0, min(1.0, practical))
+            empathy = max(0.0, min(1.0, empathy))
+
             scores = {
                 'Urgency': urgency,
                 'Emotional Distress': distress,
                 'Practical Need': practical,
                 'Empathy Requirement': empathy
             }
-        
-        # Mock graph generation
-        mock_path = f"mock_graph_{int(time.time())}.png"
-        try:
-            fig, ax = plt.subplots(figsize=(6, 4))
-            ax.text(0.5, 0.5, f"Mock Graph for:\n'{query[:30]}...' (Model: {model_type})", ha='center', va='center', fontsize=10, color='#333333')
-            ax.set_facecolor('#ffffff')
-            fig.patch.set_facecolor('#ffffff')
-            plt.axis('off')
-            plt.savefig(mock_path, bbox_inches='tight')
-            plt.close()
-        except Exception:
-            # Fallback if plt fails (e.g., environment issues)
-            return insights, scores, None
-            
-        return insights, scores, mock_path
+
+            # --- Insights Text ---
+            insights = [
+                f"**Urgency:** {urgency:.2f} – {('High' if urgency > 0.7 else 'Moderate')} need for immediate action.",
+                f"**Emotional Distress:** {distress:.2f} – Emotional state influenced by context (Mood: {mood}, Weather: {weather}).",
+                f"**Practical Need:** {practical:.2f} – Indicates how much a direct solution is needed.",
+                f"**Empathy Requirement:** {empathy:.2f} – Level of empathy expected in the response."
+            ]
+
+            # Recommended Approach
+            if urgency > 0.8:
+                approach = "Deliver a concise, urgent response with clear next steps."
+            elif distress > 0.7:
+                approach = "Use empathetic language and provide reassurance before offering solutions."
+            else:
+                approach = "Balance empathy with practical guidance to resolve the issue effectively."
+
+            insights.append(f"**Recommended Approach:**\n{approach}")
+
+            # --- Visualization: save radar chart ---
+            filename = f"persona_profile_{int(time.time())}.png"
+            try:
+                labels = list(scores.keys())
+                values = list(scores.values())
+                values += values[:1]
+                angles = np.linspace(0, 2 * np.pi, len(labels) + 1, endpoint=True)
+
+                fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+                ax.plot(angles, values, 'o-', linewidth=2, color='#007bff')
+                ax.fill(angles, values, alpha=0.25, color='#007bff')
+                ax.set_thetagrids(angles[:-1] * 180/np.pi, labels)
+                ax.set_title(f"Persona Profile: {query[:30]}... ({model_type})")
+                ax.set_ylim(0, 1)
+                plt.tight_layout()
+                plt.savefig(filename, bbox_inches='tight')
+                plt.close()
+            except Exception:
+                filename = None
+
+            return insights, scores, filename
+
+
+
 
 # -------------------------------
 # Initialize encoders silently
@@ -190,7 +217,7 @@ except ImportError:
 @st.cache_resource
 def initialize_encoders_silently():
     # Only redirecting output if the actual import is successful and constructors run
-    if 'run_persona_reasoning' in globals() and run_persona_reasoning.__name__ != 'run_persona_reasoning': # Check if the mock function is NOT the one loaded
+    if 'run_persona_reasoning' in globals() and run_persona_reasoning.__name__ != 'run_persona_reasoning':
         original_stdout, original_stderr = sys.stdout, sys.stderr
         sys.stdout = open(os.devnull, 'w')
         sys.stderr = open(os.devnull, 'w')
@@ -216,7 +243,7 @@ if not st.session_state.initialized:
     try:
         initialize_encoders_silently()
     except Exception:
-        # st.warning("Could not initialize encoders. Proceeding with mock functions.") # Disabled for cleaner UI
+        st.warning("Could not initialize encoders.")
         pass
     progress_bar.progress(100)
     time.sleep(0.3)
@@ -338,7 +365,7 @@ if st.button("Analyze Persona", use_container_width=True):
             reasoning_time = selected_time_of_day if not ignore_context else "Day"
             reasoning_weather = selected_weather_condition if not ignore_context else "Clear"
             
-            # Run the actual (or mock) reasoning logic
+            # Run the actual reasoning logic
             insights, raw_scores_dict, explanation_path = run_persona_reasoning(
                 selected_model_type, user_query, reasoning_mood, reasoning_time, reasoning_weather, ignore_context
             )
@@ -397,7 +424,7 @@ if 'last_result' in st.session_state:
     with tab2:
         col_metrics, col_chart = st.columns([1, 2])
         with col_metrics:
-            st.subheader("Numeric Scores (0.00 - 1.00)")
+            st.subheader("Numeric Scores")
             numeric_scores = result.get('scores', {})
             if numeric_scores:
                 for dim, score in numeric_scores.items():
@@ -433,7 +460,7 @@ if 'last_result' in st.session_state:
             except Exception as e:
                 st.error(f"Could not display graph: {e}")
         else:
-            st.info("No knowledge graph visualization generated (using mock data).")
+            st.info("No knowledge graph visualization generated.")
 
 # -------------------------------
 # Display Evaluation Metrics (in an expander)

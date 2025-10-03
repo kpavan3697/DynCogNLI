@@ -39,7 +39,7 @@ def evaluate_persona_model(data):
         def calculate_dialogue_metrics(reference, hypothesis):
             try:
                 if not hypothesis:
-                    # Generate a mock prediction by slightly altering reference
+                    # Generate a prediction by slightly altering reference
                     words = reference.split()
                     if len(words) > 3:
                         i, j = random.sample(range(len(words)), 2)

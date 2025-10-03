@@ -124,9 +124,9 @@ DynCogNLI/
 ├── train_gat.py               # GAT model training script
 ├── train_baseline.py          # Baseline model training script
 ├── run_inference.py           # Inference pipeline
-├── test.py                    # Test runner / utility
+├── train.py                   # Train the base model
+├── train_gat.py               # Train the GAT model
 ├── TrainingResult.png         # Training results visualization
-├── mock_graph.png             # Example graph visualization
 │
 ├── context/                   # Context management and encoders
 │   ├── context_encoder.py
@@ -200,7 +200,7 @@ DynCogNLI/
 
 ---
 
-## 📜 Available Scripts
+## Available Scripts
 
 - `train_gat.py` → Train the GAT model
 - `tools/eval_gat.py` → Evaluate the trained model
@@ -209,7 +209,7 @@ DynCogNLI/
 
 ---
 
-## ⚡ Example Workflow
+## Example Workflow
 
 1. **Setup environment**
 

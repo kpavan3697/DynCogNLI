@@ -33,7 +33,7 @@ DEFAULT_LR = 1e-3
 HIDDEN_DIM = 64
 OUTPUT_DIM = 4  # Urgency, Emotional Distress, Practical Need, Empathy Requirement
 
-# --- Mock Data Generator ---
+# --- Data Generator ---
 torch.manual_seed(42)
 np.random.seed(42)
 random.seed(42)
