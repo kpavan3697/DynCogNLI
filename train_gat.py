@@ -9,16 +9,14 @@ around a query, and then trains a GAT model.
 """
 import os
 import sys
-import json
 import random
-import time
 import argparse
 from tqdm import tqdm
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 import networkx as nx
 
 # --- New Imports for Statistics ---
@@ -62,7 +60,7 @@ HIDDEN_DIM = 128
 OUTPUT_DIM = 4
 BASE_NODE_FEATURE_DIM = 16  # small base features
 DEFAULT_TRANSFORMER_EMBED_DIM = 384
-DEFAULT_PATIENCE = 5  # New: Number of epochs to wait for improvement
+DEFAULT_PATIENCE = 2  # Number of epochs to wait for improvement
 
 # ---------- utility functions ----------
 
@@ -313,7 +311,7 @@ def generate_mock_data(atomic_triples, transformer_encoder, context_encoder, num
     """
     dataset = []
     skipped = 0
-    for _ in tqdm(range(num_samples), desc="Generating mock graphs"):
+    for _ in tqdm(range(num_samples), desc="Generating synthetic training graphs for GAT model"):
         query_text = random.choice(mock_queries)
         mood = random.choice(list(context_encoder.mood_map.keys()))
         time_of_day = random.choice(list(context_encoder.time_of_day_map.keys()))
@@ -429,10 +427,9 @@ if __name__ == "__main__":
     # Parse the arguments
     args = parser.parse_args()
 
-    # Define a new EarlyStopping class (no changes needed)
+    # Define EarlyStopping class
     class EarlyStopping:
         def __init__(self, patience=5, min_delta=0, verbose=False):
-            # ... (rest of the class)
             self.patience = patience
             self.min_delta = min_delta
             self.verbose = verbose

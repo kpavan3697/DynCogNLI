@@ -28,7 +28,7 @@ from context.context_encoder import ContextEncoder
 from preprocessing.mock_data_generator import generate_persona_data
 
 # --- Default Config ---
-DEFAULT_EPOCHS = 3
+DEFAULT_EPOCHS = 20
 DEFAULT_BATCH = 8
 DEFAULT_LR = 1e-3
 HIDDEN_DIM = 64

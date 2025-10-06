@@ -57,6 +57,18 @@ To train the baseline model with ConceptNet and ATOMIC datasets:
 python train_baseline.py
 ```
 
+Optional Arguments:
+
+- `--epochs` → Path to ATOMIC dataset
+- `--batch-size` → Batch size for training
+- `--lr` → Learning rate for the optimizer
+
+If no arguments are provided, the default configuration below is used:
+
+- `--epochs` = 20
+- `--batch-size` = 8
+- `--lr` = 1e-3
+
 ---
 
 ## 📊 Evaluation
@@ -117,26 +129,24 @@ Access in your browser:
 
 ```
 DynCogNLI/
-├── README.md                  # Project documentation
-├── requirements.txt           # Project dependencies
-├── config.json                # Configuration file
-├── app.py                     # Streamlit interface
-├── train_gat.py               # GAT model training script
-├── train_baseline.py          # Baseline model training script
-├── run_inference.py           # Inference pipeline
-├── train.py                   # Train the base model
-├── train_gat.py               # Train the GAT model
-├── TrainingResult.png         # Training results visualization
+├── README.md
+├── requirements.txt
+├── config.json
+├── app.py
+├── train_gat.py
+├── train_baseline.py
+├── run_inference.py
+├── aggregate_summary.json
+├── evaluated_results.json
 │
-├── context/                   # Context management and encoders
+├── context/
 │   ├── context_encoder.py
 │   ├── context_manager.py
-│   ├── proj_structure.py
 │   ├── real_time_updater.py
 │   ├── response_generator.py
 │   └── transformer_encoder.py
 │
-├── data/                      # Datasets
+├── data/
 │   ├── atomic2020/
 │   │   └── train.csv
 │   ├── conceptnet/
@@ -145,15 +155,16 @@ DynCogNLI/
 │       ├── node2id.json
 │       └── rel2id.json
 │
-├── evaluation/                # Evaluation scripts & results
+├── evaluation/
+│   ├── dialogue_metric.py
 │   ├── evaluation_data.json
 │   ├── evaluation_results.json
 │   ├── evaluator.py
 │   └── get_evaluation_stats.py
 │
-├── explanation_images/         # Supporting images for documentation
+├── explanation_images/
 │
-├── knowledge/                 # Knowledge graph utilities
+├── knowledge/
 │   ├── common_sense_client.py
 │   ├── graph_builder.py
 │   ├── graph_visualizer.py
@@ -161,39 +172,37 @@ DynCogNLI/
 │   ├── retriever.py
 │   └── visualizer.py
 │
-├── llm/                       # Large language model interface
+├── llm/
 │   └── llm_responder.py
 │
-├── models/                    # Saved models and checkpoints
+├── models/
 │   └── persona_gat_model.pth
 │
-├── preprocessing/             # Dataset loaders
+├── preprocessing/
 │   ├── atomic_loader.py
 │   └── conceptnet_loader.py
+│   └── mock_data_generator.py
 │
-├── reasoning/                 # GNN reasoning modules
+├── reasoning/
 │   ├── gat_model.py
 │   ├── graph_builder.py
 │   ├── multi_hop_reasoner.py
 │   └── simple_model.py
 │
-├── response/                  # Response generators
-│   └── recommender.py
-│
-├── scripts/                   # Utility run scripts
+├── scripts/
 │   ├── run_streamlit.bat
 │   ├── run_streamlit.ps1
 │   └── run_streamlit.sh
 │
-├── tools/                     # Analysis and evaluation tools
+├── tools/
 │   ├── app copy.py
 │   ├── eval_gat.py
 │   └── inspect_checkpoint.py
 │
-├── utils/                     # Helper utilities
+├── utils/
 │   └── graph_utils.py
 │
-└── visualization/             # Graph visualization tools
+└── visualization/
     └── graph_plotter.py
 
 ```
@@ -222,7 +231,7 @@ DynCogNLI/
 2. **Train the model**
 
    ```bash
-   python train_gat.py --atomic data/atomic2020/train.csv --epochs 10 --batch-size 8
+   python train_gat.py --atomic data/atomic2020/train.csv --batch-size 8
    ```
 
 3. **Evaluate model performance**
