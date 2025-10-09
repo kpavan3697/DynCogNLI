@@ -71,6 +71,14 @@ If no arguments are provided, the default configuration below is used:
 
 ---
 
+After training the models, run the following command. This will update the aggregate_summary.json, which is used to display the metrics on the UI.
+
+```bash
+python .\evaluation\evaluator.py
+```
+
+---
+
 ## 📊 Evaluation
 
 The `eval_gat.py` script evaluates the performance of the trained GAT model. It loads a checkpoint, prepares evaluation data, runs inference, and computes metrics.
